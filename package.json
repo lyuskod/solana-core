@@ -1,0 +1,31 @@
+{
+  "name": "duc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "commit": "yarn cz"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lyuskod/duc.git"
+  },
+  "author": "Dmitry Lyusko",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lyuskod/duc/issues"
+  },
+  "homepage": "https://github.com/lyuskod/duc#readme",
+  "dependencies": {
+    "commitizen": "^4.2.6",
+    "yarn": "^1.22.19"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
