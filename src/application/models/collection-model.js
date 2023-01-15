@@ -1,4 +1,4 @@
-import { DTOContract } from "../../framework/contract/dto-contract.js"
+import { DTOContract } from '../../framework/contract/dto-contract.js'
 
 export class CollectionModel extends DTOContract {
   constructor() {
@@ -18,10 +18,10 @@ export class CollectionModel extends DTOContract {
   }
 
   /**
-   * 
-   * @returns {CollectionModel} 
+   *
+   * @returns {CollectionModel}
    */
-  cast(rawObject){
+  cast(rawObject) {
     super.cast(rawObject)
     return this
   }

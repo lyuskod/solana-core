@@ -1,4 +1,4 @@
-import { DTOContract } from "../../framework/contract/dto-contract.js"
+import { DTOContract } from '../../framework/contract/dto-contract.js'
 
 export class NFTModel extends DTOContract {
   constructor() {
@@ -15,14 +15,24 @@ export class NFTModel extends DTOContract {
     this.externalUrl = undefined
     this.attributes = undefined
     this.properties = undefined
+    this.price = undefined
+    this.listStatus = undefined
+    this.tokenAddress = undefined
   }
 
   /**
-   * 
-   * @returns {NFTModel} 
+   *
+   * @returns {NFTModel}
    */
-  cast(rawObject){
-    super.cast(rawObject)
-    return this
+  cast(rawObject) {
+    return super.cast(rawObject, NFTModel)
+  }
+
+   /**
+   *
+   * @returns {Array<NFTModel>}
+   */
+  castAll(rawObject) {
+    return super.castAll(rawObject, NFTModel)
   }
 }
