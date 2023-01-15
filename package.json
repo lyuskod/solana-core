@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "commit": "yarn cz"
+    "commit": "yarn cz",
+    "test": "node sandbox.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,14 @@
   },
   "homepage": "https://github.com/lyuskod/duc#readme",
   "dependencies": {
+    "@babel/preset-env": "^7.20.2",
+    "axios": "^1.2.2",
+    "babel-eslint": "^10.1.0",
     "commitizen": "^4.2.6",
+    "dotenv": "^16.0.3",
+    "eslint": "^8.31.0",
+    "lodash": "^4.17.21",
+    "prettier": "^2.8.3",
     "yarn": "^1.22.19"
   },
   "devDependencies": {
@@ -27,5 +35,6 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "type": "module"
 }
