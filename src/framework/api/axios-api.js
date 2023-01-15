@@ -7,22 +7,20 @@ export class AxiosService {
         }
     }
 
-    static sendGet(url, params, callback) {
+    static sendGet(url, params) {
         if (!(params == null || params == '')) {
             url = `${url}?${this.#formatGetParamsIntoString(params)}`
         }
 
-        axios({
+        return axios({
             method: 'get',
             url,
-        }).then((response) => {
-            callback(response)
         })
     }
 
     static #formatGetParamsIntoString(params) {
         if (!(params instanceof Object)) {
-            throw new Exception(
+            throw new Error(
                 'Params should be an object with KV-pairs: { name: value }'
             )
         }
