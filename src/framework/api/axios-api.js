@@ -7,8 +7,14 @@ export class AxiosService {
     }
   }
 
+  /**
+   * @description Send GET Axios request by params
+   * @param {String} url - URL to call
+   * @param {Object} params - Params in object-like instance (e.g. {name: 'Tom'})
+   * @returns
+   */
   static sendGet(url, params) {
-    if (!(params == null || params == '')) {
+    if (!(params == null || params == '' || params == {})) {
       url = `${url}?${this.#formatGetParamsIntoString(params)}`
     }
 
@@ -18,6 +24,11 @@ export class AxiosService {
     })
   }
 
+  /**
+   * @description (Internal) Format params in object-like instance into String format (e.g. 'name=Tome&age=19')
+   * @param {Object} params Params in object-like instance (e.g. {name: 'Tom'})
+   * @returns
+   */
   static #formatGetParamsIntoString(params) {
     if (!(params instanceof Object)) {
       throw new Error(

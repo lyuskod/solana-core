@@ -22,7 +22,6 @@ export class CollectionModel extends DTOContract {
    * @returns {CollectionModel}
    */
   cast(rawObject) {
-    super.cast(rawObject)
-    return this
+    return super.cast(rawObject, CollectionModel)
   }
 }

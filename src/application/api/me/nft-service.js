@@ -1,16 +1,21 @@
 import { AxiosService } from '../../../framework/api/axios-api.js'
+import { ErrorHelper } from '../../../framework/helpers/error-helper.js'
 
 export class NFTService {
   constructor(apiUrl) {
     this.apiUrl = `${apiUrl}/tokens`
   }
 
+  /**
+   * @description Fetch information of a token / NFT
+   * @param {String} nftAddress - NFT Token address (UUID)
+   * @returns 
+   */
   getNFTInfo(nftAddress) {
-    if (!nftAddress) {
-      throw new Error(
-        `NFT Address value cannot be null/empty/undefined. Provided: ${nftAddress}`
-      )
-    }
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
+      nftAddress,
+      `NFT Address:${this.getNFTInfo.name}`
+    )
     return AxiosService.sendGet(`${this.apiUrl}/${nftAddress}`, {})
   }
 }
