@@ -1,5 +1,5 @@
-import { AxiosService } from '../../../framework/api/axios/service.js'
-import { ErrorHelper } from '../../../framework/helpers/error-helper.js'
+import { AxiosService } from '../axios/service.js'
+import { ErrorHelper } from '../../helpers/error-helper.js'
 
 export class WalletService {
   constructor(apiUrl) {
@@ -106,13 +106,13 @@ export class WalletService {
    * @param {String} walletAddress - Wallet Address (UUID)
    * @returns
    */
-  getBalance(walletAddress) {
+  async getBalance(walletAddress) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
       `Wallet Address:${this.getBalance.name}`
     )
 
-    return AxiosService.sendGet(
+    return await AxiosService.sendGet(
       `${this.apiUrl}/wallets/${walletAddress}/escrow_balance`
     )
   }
