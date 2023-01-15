@@ -19,6 +19,7 @@
   "homepage": "https://github.com/lyuskod/duc#readme",
   "dependencies": {
     "@babel/preset-env": "^7.20.2",
+    "@solana/web3.js": "^1.73.0",
     "axios": "^1.2.2",
     "babel-eslint": "^10.1.0",
     "commitizen": "^4.2.6",
