@@ -3,10 +3,14 @@ import { WalletService } from './wallet-service.js'
 import { CollectionService } from './collection-service.js'
 
 export class MEApiService {
+  #nftService
+  #walletService
+  #collectionService
+
   constructor(apiUrl) {
-    this.nftService = new NFTService(apiUrl)
-    this.walletService = new WalletService(apiUrl)
-    this.collectionService = new CollectionService(apiUrl)
+    this.#nftService = new NFTService(apiUrl)
+    this.#walletService = new WalletService(apiUrl)
+    this.#collectionService = new CollectionService(apiUrl)
   }
 
   /**
@@ -14,7 +18,7 @@ export class MEApiService {
    * @returns {NFTService}
    */
   getNFTService() {
-    return this.nftService
+    return this.#nftService
   }
 
   /**
@@ -22,14 +26,14 @@ export class MEApiService {
    * @returns {WalletService}
    */
   getWalletService() {
-    return this.walletService
+    return this.#walletService
   }
 
   /**
    * @description Get ME collection service object
    * @returns {CollectionService}
    */
-  geCollectionService() {
-    return this.collectionService
+  getCollectionService() {
+    return this.#collectionService
   }
 }
