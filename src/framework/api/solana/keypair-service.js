@@ -4,11 +4,11 @@ import { LoggerTool } from '../../tools/logger-tool.js'
 
 export class KeyPairService {
   /**
-   * @description Encodes the private key string into Uint8Array
-   * @param {String} privateKeyString - Private key in String
+   * @description Encodes the private/public key string into Uint8Array
+   * @param {String} privateKeyString - Private/Public key in String
    * @returns
    */
-  encodeStrPrivateKey(
+  encodeStrPKey(
     privateKeyString,
     opts = { logPrivateKey: false, logEncodedUInt8Array: false }
   ) {
@@ -26,11 +26,11 @@ export class KeyPairService {
   }
 
   /**
-   * @description Decodes the private key Uint8Array into String
-   * @param {String} privateKeyUint8Array - Private key in Uint8Array
+   * @description Decodes the private/public key Uint8Array into String
+   * @param {String} privateKeyUint8Array - Private/Public key in Uint8Array
    * @returns
    */
-  decodeUint8ArrayPrivateKey(
+  decodeUint8ArrayPKey(
     privateKeyUint8Array,
     opts = { logPrivateKeyUint8Array: false, logDecodedStringPrivateKey: false }
   ) {
