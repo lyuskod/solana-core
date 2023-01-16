@@ -8,7 +8,6 @@ jobs:
     - name: Install modules
       run: yarn
     - name: Set env variables
-      run: 
-        export JEST_SOLANA_NETWORK=mainnet-beta
+      run: echo "JEST_SOLANA_NETWORK=mainnet-beta"
     - name: Run unit-tests (Jest)
       run: yarn test
