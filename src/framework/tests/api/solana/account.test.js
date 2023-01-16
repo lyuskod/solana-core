@@ -31,7 +31,7 @@ test('Verify get solana account balance throws an error when public key is an em
   }
 })
 
-test.only('Verify get solana account balance throws an error when public key is null', async () => {
+test('Verify get solana account balance throws an error when public key is null', async () => {
   try {
     await service.getBalance(null)
     throw new Error('Get balance didnt throw an error when invalid public key')
@@ -40,7 +40,7 @@ test.only('Verify get solana account balance throws an error when public key is 
   }
 })
 
-test.only('Verify get solana account balance throws an error when public key is undefined', async () => {
+test('Verify get solana account balance throws an error when public key is undefined', async () => {
   try {
     await service.getBalance(null)
     throw new Error('Get balance didnt throw an error when invalid public key')
@@ -49,7 +49,7 @@ test.only('Verify get solana account balance throws an error when public key is 
   }
 })
 
-test.only('Verify get solana account info returns valid output', async () => {
+test('Verify get solana account info returns valid output', async () => {
   const actualAccountInfo = await service.getAccountInfo(
     accountTestData.validAccount.publicKey
   )
