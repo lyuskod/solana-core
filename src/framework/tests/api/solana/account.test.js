@@ -53,6 +53,8 @@ test('Verify get solana account info returns valid output', async () => {
   const actualAccountInfo = await service.getAccountInfo(
     accountTestData.validAccount.publicKey
   )
+  console.log("---------->>>>>")
+  console.log(EnvironmentHelper.getEnvValueByKey('JEST_SOLANA_NETWORK'))
   expect(actualAccountInfo).not.toBeNull()
   expect(actualAccountInfo.owner).toBeInstanceOf(PublicKey)
 })
