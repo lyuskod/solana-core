@@ -3,11 +3,12 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
+    env: 
+      JEST_SOLANA_NETWORK: mainnet-beta
+
     steps:
     - uses: actions/checkout@v2
     - name: Install modules
       run: yarn
-    - name: Set env variables
-      run: echo "JEST_SOLANA_NETWORK=mainnet-beta"
     - name: Run unit-tests (Jest)
       run: yarn test
