@@ -31,7 +31,6 @@
     "lodash": "^4.17.21",
     "npmlog": "^7.0.1",
     "prettier": "^2.8.3",
-    "web3-utils": "^1.8.1",
     "yarn": "^1.22.19"
   },
   "devDependencies": {
