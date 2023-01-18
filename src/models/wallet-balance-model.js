@@ -1,4 +1,4 @@
-import { DTOContract } from '../../framework/contract/dto-contract.js'
+import { DTOContract } from '../contract/dto-contract.js'
 
 export class WalletBalanceModel extends DTOContract {
   constructor() {
