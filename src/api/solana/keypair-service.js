@@ -3,6 +3,20 @@ import { base58_to_binary, binary_to_base58 } from 'base58-js'
 import { LoggerTool } from '../../tools/logger-tool.js'
 
 export class KeyPairService {
+  #serviceName = 'Keypair'
+  #network
+  constructor(network) {
+    this.#network = network
+  }
+
+  /**
+   * @description Generates random keypair
+   * @returns 
+   */
+  generateRandomKeypair(){
+    return Keypair.generate()
+  }
+
   /**
    * @description Encodes the private/public key string into Uint8Array
    * @param {String} privateKeyString - Private/Public key in String
@@ -13,14 +27,18 @@ export class KeyPairService {
     opts = { logPrivateKey: false, logEncodedUInt8Array: false }
   ) {
     LoggerTool.silly(
-      KeyPairService.name,
-      'Encode string private key into Uint8Array',
+      this.#serviceName,
+      `(${this.#network}) Encode string private key into Uint8Array`,
       opts.logPrivateKey ? privateKeyString : null
     )
     let array = base58_to_binary(privateKeyString)
 
     if (opts.logEncodedUInt8Array) {
-      LoggerTool.silly(KeyPairService.name, 'Encoded Uint8Array', array)
+      LoggerTool.silly(
+        this.#serviceName,
+        `(${this.#network}) Encoded Uint8Array`,
+        array
+      )
     }
     return array
   }
@@ -35,16 +53,16 @@ export class KeyPairService {
     opts = { logPrivateKeyUint8Array: false, logDecodedStringPrivateKey: false }
   ) {
     LoggerTool.silly(
-      KeyPairService.name,
-      'Decode Uint8Array private key into String',
+      this.#serviceName,
+      `(${this.#network}) Decode Uint8Array private key into String`,
       opts.logPrivateKeyUint8Array ? privateKeyUint8Array : null
     )
 
     let strPrivateKey = binary_to_base58(privateKeyUint8Array)
     if (opts.logDecodedStringPrivateKey) {
       LoggerTool.silly(
-        KeyPairService.name,
-        'Decoded Uint8Array private key (String)',
+        this.#serviceName,
+        `(${this.#network}) Decoded Uint8Array private key (String)`,
         strPrivateKey
       )
     }
@@ -66,7 +84,7 @@ export class KeyPairService {
   ) {
     LoggerTool.silly(
       KeyPairService.name,
-      'Create Keypair instance based on private key',
+      `(${this.#network}) Create Keypair instance based on private key`,
       opts.logPrivateKey ? privateKeyString : null
     )
     let keyPair = Keypair.fromSecretKey(base58_to_binary(privateKeyString))
@@ -74,7 +92,7 @@ export class KeyPairService {
     if (opts.logCreatedKeyPair) {
       LoggerTool.silly(
         KeyPairService.name,
-        'Created Keypair instance based on private key',
+        `(${this.#network}) Created Keypair instance based on private key`,
         keyPair
       )
     }

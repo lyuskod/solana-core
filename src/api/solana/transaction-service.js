@@ -10,8 +10,11 @@ import { LoggerTool } from '../../tools/logger-tool.js'
 export class SolanaTransactionService {
   #connection
   #transaction
-  constructor(connection) {
+  #network
+  #serviceName = "Transaction"
+  constructor(connection, network) {
     this.#connection = connection
+    this.#network = network
   }
 
   /**
@@ -30,8 +33,8 @@ export class SolanaTransactionService {
     }
   ) {
     LoggerTool.silly(
-      SolanaTransactionService.name,
-      `Transfer '${opts.solAmount}': \n-from '${senderPublicKey}'\n-to '${receiverPublicKey}'\n`,
+      this.#serviceName,
+      `(${this.#network}) Transfer '${opts.solAmount}': \n-from '${senderPublicKey}'\n-to '${receiverPublicKey}'\n`,
       opts
     )
     let senderKeyPairSecret = opts.secretKeyByteArray
