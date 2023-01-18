@@ -1,5 +1,5 @@
-import { AxiosService } from '../../../framework/api/axios/service.js'
-import { ErrorHelper } from '../../../framework/helpers/error-helper.js'
+import { AxiosService } from '../axios/service.js'
+import { ErrorHelper } from '../../helpers/error-helper.js'
 
 export class CollectionService {
   constructor(apiUrl) {

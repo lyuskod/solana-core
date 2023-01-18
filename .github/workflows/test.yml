@@ -1,0 +1,14 @@
+name: CI (Unit tests)
+on: push
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env: 
+      JEST_SOLANA_NETWORK: devnet
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install modules
+      run: yarn
+    - name: Run unit-tests (Jest)
+      run: yarn test
