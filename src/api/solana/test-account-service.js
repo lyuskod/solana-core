@@ -86,7 +86,7 @@ export class SolanaTestAccountService {
           )
         )
         if (solAmount > 1) {
-          console.log("waiting")
+          console.log('waiting')
           setTimeout(() => {}, opts.timeoutInMills)
         }
       }
@@ -98,5 +98,32 @@ export class SolanaTestAccountService {
       publicKeyString,
       solAmount
     )
+  }
+
+  /**
+   * @description Fetch an account SOL balance
+   * @param {String} publicKey - Account public key in String
+   * @returns
+   */
+  async getBalance(publicKey, opts = { logBalance: false }) {
+    LoggerTool.silly(
+      this.#serviceName,
+      `(${this.#network}) Get account balance by public key`,
+      publicKey
+    )
+
+    let balance =
+      (await this.#connection.getBalance(new PublicKey(publicKey))) /
+      LAMPORTS_PER_SOL
+
+    if (opts.logBalance) {
+      LoggerTool.silly(
+        this.#serviceName,
+        `(${this.#network}) Balance in sol`,
+        publicKey,
+        balance
+      )
+    }
+    return balance
   }
 }
