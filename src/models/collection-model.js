@@ -1,4 +1,4 @@
-import { DTOContract } from '../contract/dto-contract.js'
+import { DTOContract } from '../contract/dto-helper.js'
 
 export class CollectionModel extends DTOContract {
   constructor() {
