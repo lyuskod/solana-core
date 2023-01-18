@@ -1,10 +1,23 @@
 import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { LoggerTool } from '../../tools/logger-tool.js'
+import { SolanaTestAccountService } from './test-account-service.js'
 
 export class SolanaAccountService {
   #connection
-  constructor(connection) {
+  #network
+  #serviceName = 'Account'
+  constructor(connection, network) {
+    this.#network = network
     this.#connection = connection
+  }
+
+  /**
+   * @description For testing purposes
+   * @param {String} network - Cluster network. Works only for if network is 'devnet' or 'testnet'
+   * @returns
+   */
+  sandbox(network) {
+    return new SolanaTestAccountService(network)
   }
 
   /**
@@ -14,8 +27,8 @@ export class SolanaAccountService {
    */
   async getBalance(publicKey, opts = { logBalance: false }) {
     LoggerTool.silly(
-      SolanaAccountService.name,
-      'Get account balance by public key',
+      this.#serviceName,
+      `(${this.#network}) Get account balance by public key`,
       publicKey
     )
 
@@ -25,8 +38,8 @@ export class SolanaAccountService {
 
     if (opts.logBalance) {
       LoggerTool.silly(
-        SolanaAccountService.name,
-        `Balance in sol`,
+        this.#serviceName,
+        `(${this.#network}) Balance in sol`,
         publicKey,
         balance
       )
@@ -41,8 +54,8 @@ export class SolanaAccountService {
    */
   async getAccountInfo(publicKey, opts = { logAccountInfo: false }) {
     LoggerTool.silly(
-      SolanaAccountService.name,
-      'Get account info by public key',
+      this.#serviceName,
+      `(${this.#network}) Get account info by public key`,
       publicKey
     )
 
@@ -51,12 +64,13 @@ export class SolanaAccountService {
     )
     if (opts.logAccountInfo) {
       LoggerTool.silly(
-        SolanaAccountService.name,
-        'Account info',
-        publicKey, accountInfo
+        this.#serviceName,
+        `(${this.#network}) Account info`,
+        publicKey,
+        accountInfo
       )
     }
 
-    return accountInfo;
+    return accountInfo
   }
 }
