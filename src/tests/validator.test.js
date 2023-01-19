@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import { SolanaValidatorService } from '../api/solana/validator-service.js'
+import { SolanaValidatorService } from '../services/solana/validator-service.js'
 
 test('[Validator]: Error is not thrown if main network is valid', () => {
   SolanaValidatorService.validateMainNetwork('mainnet-beta')
