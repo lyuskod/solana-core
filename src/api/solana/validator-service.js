@@ -1,6 +1,7 @@
 export class SolanaValidatorService {
   static #testNetworks = ['devnet', 'testnet']
   static #prodNetworks = ['mainnet-beta']
+  static #validNetworks = ['devnet', 'testnet', 'mainnet-beta']
   constructor() {
     if (this instanceof SolanaValidatorService) {
       throw Error('A static class cannot be instantiated.')
@@ -28,10 +29,11 @@ export class SolanaValidatorService {
   }
 
   static validateNetwork(network) {
-    const networks = ['mainnet', 'devnet', 'testnet']
-    if (!networks.includes(network)) {
+    if (!SolanaValidatorService.#validNetworks.includes(network)) {
       throw new Error(
-        `'${network}' is not a valid network. Available production networks are: [${networks}]`
+        `'${network}' is not a valid network. Available networks are: [${
+          SolanaValidatorService.#validNetworks
+        }]`
       )
     }
   }
