@@ -7,11 +7,7 @@ export class ErrorHelper {
 
   static throwErrorIfUndefinedNullOrEmpty(value, valueName = '') {
     if (!value) {
-      throw new Error(
-        `${
-          valueName == '' ? '' : `${valueName} `
-        }value cannot be null/undefined/empty. You provided: ${value}`
-      )
+      throw new Error('Value cannot be null/undefined/empty')
     }
   }
 }
