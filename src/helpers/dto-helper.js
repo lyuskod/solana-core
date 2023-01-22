@@ -1,5 +1,5 @@
 import _ from 'lodash'
-export class DTOContract {
+export class DTOHelper {
   /**
    * @description Cast an object-like instance (in json format) into the class (constructor)
    * @param {Object} rawObj - Object-like instance

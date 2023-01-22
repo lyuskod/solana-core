@@ -2,7 +2,7 @@ import { Keypair } from '@solana/web3.js'
 import { base58_to_binary, binary_to_base58 } from 'base58-js'
 import { LoggerTool } from '../../tools/logger-tool.js'
 
-export class KeyPairService {
+export class SolanaKeyPairService {
   #serviceName = 'Keypair'
   #network
   constructor(network) {
@@ -83,7 +83,7 @@ export class KeyPairService {
     }
   ) {
     LoggerTool.silly(
-      KeyPairService.name,
+      SolanaKeyPairService.name,
       `(${this.#network}) Create Keypair instance based on private key`,
       opts.logPrivateKey ? privateKeyString : null
     )
@@ -91,7 +91,7 @@ export class KeyPairService {
 
     if (opts.logCreatedKeyPair) {
       LoggerTool.silly(
-        KeyPairService.name,
+        SolanaKeyPairService.name,
         `(${this.#network}) Created Keypair instance based on private key`,
         keyPair
       )

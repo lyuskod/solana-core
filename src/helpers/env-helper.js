@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import { ErrorHelper } from './error-helper'
 dotenv.config()
 
 export class EnvironmentHelper {
@@ -9,6 +10,7 @@ export class EnvironmentHelper {
   }
 
   static getEnvValueByKey(key) {
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(key)
     return process.env[key]
   }
 }

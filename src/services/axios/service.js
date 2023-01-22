@@ -25,7 +25,7 @@ export class AxiosService {
   }
 
   /**
-   * @description (Internal) Format params in object-like instance into String format (e.g. 'name=Tome&age=19')
+   * @description (Internal) Format params from object-like instance into String format (e.g. 'name=Tome&age=19')
    * @param {Object} params Params in object-like instance (e.g. {name: 'Tom'})
    * @returns
    */

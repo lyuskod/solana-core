@@ -1,9 +1,10 @@
 import { Connection, clusterApiUrl } from '@solana/web3.js'
 import { SolanaAccountService } from './account-service.js'
-import { KeyPairService } from './keypair-service.js'
+import { SolanaKeyPairService } from './keypair-service.js'
 import { SolanaTransactionService } from './transaction-service.js'
 import { LoggerTool } from '../../tools/logger-tool.js'
 import { SolanaValidatorService } from './validator-service.js'
+import { ErrorHelper } from '../../helpers/error-helper.js'
 
 export class SolanaConnectionService {
   #connection
@@ -13,6 +14,7 @@ export class SolanaConnectionService {
   #network
   #serviceName = "Connection"
   constructor(network) {
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(network)
     SolanaValidatorService.validateMainNetwork(network)
     LoggerTool.silly(
       this.#serviceName,
@@ -25,7 +27,7 @@ export class SolanaConnectionService {
     this.#network = network
     this.#connection = new Connection(clusterApiUrl(network))
     this.#accountService = new SolanaAccountService(this.#connection)
-    this.#keyPairService = new KeyPairService()
+    this.#keyPairService = new SolanaKeyPairService()
     this.#transactionService = new SolanaTransactionService(this.#connection)
   }
 
