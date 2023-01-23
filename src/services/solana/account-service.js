@@ -28,7 +28,7 @@ export class SolanaAccountService {
   async getBalance(publicKey, opts = { logBalance: false }) {
     LoggerTool.silly(
       this.#serviceName,
-      `(${this.#network}) Get account balance by public key`,
+      `(${this.#network})[READY] Get account balance by public key`,
       publicKey
     )
 
@@ -36,14 +36,12 @@ export class SolanaAccountService {
       (await this.#connection.getBalance(new PublicKey(publicKey))) /
       LAMPORTS_PER_SOL
 
-    if (opts.logBalance) {
-      LoggerTool.silly(
-        this.#serviceName,
-        `(${this.#network}) Balance in sol`,
-        publicKey,
-        balance
-      )
-    }
+    LoggerTool.silly(
+      this.#serviceName,
+      `(${this.#network})[SUCCESS] Get account balance by public key`,
+      publicKey,
+      opts.logBalance ? balance : null
+    )
     return balance
   }
 
@@ -55,21 +53,20 @@ export class SolanaAccountService {
   async getAccountInfo(publicKey, opts = { logAccountInfo: false }) {
     LoggerTool.silly(
       this.#serviceName,
-      `(${this.#network}) Get account info by public key`,
+      `(${this.#network})[READY] Get account info by public key`,
       publicKey
     )
 
     let accountInfo = await this.#connection.getAccountInfo(
       new PublicKey(publicKey)
     )
-    if (opts.logAccountInfo) {
-      LoggerTool.silly(
-        this.#serviceName,
-        `(${this.#network}) Account info`,
-        publicKey,
-        accountInfo
-      )
-    }
+
+    LoggerTool.silly(
+      this.#serviceName,
+      `(${this.#network})[SUCCESS] Get account info by public key`,
+      publicKey,
+      opts.logAccountInfo ? accountInfo : null
+    )
 
     return accountInfo
   }
