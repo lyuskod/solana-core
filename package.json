@@ -26,6 +26,7 @@
     "babel-eslint": "^10.1.0",
     "base58-js": "^1.0.5",
     "commitizen": "^4.2.6",
+    "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "eslint": "^8.31.0",
     "lodash": "^4.17.21",
