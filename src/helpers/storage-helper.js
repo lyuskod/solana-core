@@ -7,6 +7,8 @@ import { format } from 'date-fns'
 
 export class StorageHelper {
   #usersStorageFilePath
+  #listedNFTsStorageFilePath
+  #unlistedNFTsStorageFilePath
   constructor(pathToDir) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       pathToDir,
@@ -14,6 +16,86 @@ export class StorageHelper {
     )
     this.#doesDirExists(pathToDir)
     this.#usersStorageFilePath = `${pathToDir}/users-storage.json`
+    this.#listedNFTsStorageFilePath = `${pathToDir}/listed-nfts-storage.json`
+    this.#unlistedNFTsStorageFilePath = `${pathToDir}/unlisted-nfts-storage.json`
+  }
+
+  createUnlistedNFTsStorage() {
+    LoggerTool.silly(
+      'StorageHelper',
+      '[READY] Create unlisted nfts storage file',
+      this.#unlistedNFTsStorageFilePath
+    )
+
+    LoggerTool.silly(
+      'StorageHelper',
+      '[READY] Checking if unlisted nfts storage file exists',
+      this.#unlistedNFTsStorageFilePath
+    )
+
+    const fileExists = this.#doesFileExists(this.#unlistedNFTsStorageFilePath)
+    if (!fileExists) {
+      LoggerTool.silly(
+        'StorageHelper',
+        '[READY] Unlisted nfts storage file does not exist. Creating',
+        this.#unlistedNFTsStorageFilePath
+      )
+      fs.writeFileSync(
+        this.#unlistedNFTsStorageFilePath,
+        JSON.stringify({
+          fileCreatedDate: format(Date.now(), 'yyyy-mm-dd hh:mm:ss'),
+          fileModifiedDate: format(Date.now(), 'yyyy-mm-dd hh:mm:ss'),
+          unlistedNFTs: [],
+        })
+      )
+    }
+
+    LoggerTool.silly(
+      'StorageHelper',
+      fileExists
+        ? '[SUCCESS] Unlisted nfts storage file is already exists. Skipping'
+        : '[SUCCESS] Created unlisted nfts storage file',
+      this.#unlistedNFTsStorageFilePath
+    )
+  }
+
+  createListedNFTsStorage() {
+    LoggerTool.silly(
+      'StorageHelper',
+      '[READY] Create listed nfts storage file',
+      this.#listedNFTsStorageFilePath
+    )
+
+    LoggerTool.silly(
+      'StorageHelper',
+      '[READY] Checking if listed nfts storage file exists',
+      this.#listedNFTsStorageFilePath
+    )
+
+    const fileExists = this.#doesFileExists(this.#listedNFTsStorageFilePath)
+    if (!fileExists) {
+      LoggerTool.silly(
+        'StorageHelper',
+        '[READY] Listed nfts storage file does not exist. Creating',
+        this.#listedNFTsStorageFilePath
+      )
+      fs.writeFileSync(
+        this.#listedNFTsStorageFilePath,
+        JSON.stringify({
+          fileCreatedDate: format(Date.now(), 'yyyy-mm-dd hh:mm:ss'),
+          fileModifiedDate: format(Date.now(), 'yyyy-mm-dd hh:mm:ss'),
+          listedNFTs: [],
+        })
+      )
+    }
+
+    LoggerTool.silly(
+      'StorageHelper',
+      fileExists
+        ? '[SUCCESS] Listed nfts storage file is already exists. Skipping'
+        : '[SUCCESS] Created listed nfts storage file',
+      this.#listedNFTsStorageFilePath
+    )
   }
 
   createUsersStorage() {
@@ -52,6 +134,53 @@ export class StorageHelper {
         ? '[SUCCESS] Users storage file is already exists. Skipping'
         : '[SUCCESS] Created users storage file',
       this.#usersStorageFilePath
+    )
+  }
+
+  /**
+   *
+   * @param {Keypair} keypair
+   */
+  addUnlistedNFTIntoStorage(nftObj) {
+    LoggerTool.silly(
+      'StorageHelper',
+      '[READY] Add unlisted nft into storage',
+      this.#unlistedNFTsStorageFilePath
+    )
+    const unlistedNftsStorage = JSON.parse(
+      fs.readFileSync(this.#unlistedNFTsStorageFilePath)
+    )
+    const date_add = format(Date.now(), 'yyyy-mm-dd hh:mm:ss')
+
+    let index =
+      unlistedNftsStorage.unlistedNFTs.length > 0
+        ? unlistedNftsStorage.unlistedNFTs.length
+        : 0
+    unlistedNftsStorage.unlistedNFTs.push({
+      id: index,
+      mintAddress: nftObj.mintAddress,
+      owner: nftObj.owner,
+      supply: nftObj.supply,
+      collection: nftObj.collection,
+      collectionName: nftObj.collectionName,
+      name: nftObj.name,
+      updateAuthority: nftObj.updateAuthority,
+      primarySaleHappened: nftObj.primarySaleHappened,
+      sellerFeeBasisPoints: nftObj.sellerFeeBasisPoints,
+      image: nftObj.image,
+      externalUrl: nftObj.externalUrl,
+      listStatus: nftObj.listStatus,
+    })
+    unlistedNftsStorage.fileModifiedDate = date_add
+    fs.writeFileSync(
+      this.#unlistedNFTsStorageFilePath,
+      JSON.stringify(unlistedNftsStorage)
+    )
+
+    LoggerTool.silly(
+      'StorageHelper',
+      `[SUCCESS] Add unlisted nft with '${index}' ID into storage`,
+      this.#unlistedNFTsStorageFilePath
     )
   }
 

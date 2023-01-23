@@ -12,7 +12,7 @@ export class WalletService {
    * @param {Object} params - Object like instance {offset: 0, limit: 100}
    * @returns
    */
-  getListedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getListedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
       `Wallet Address:${this.getListedNFTs.name}`
@@ -22,7 +22,7 @@ export class WalletService {
         `Wallet Address value cannot be null/empty/undefined. Provided: ${walletAddress}`
       )
     }
-    return this.#getNFTs(walletAddress, {
+    return await this.#getNFTs(walletAddress, {
       offset: params.offset,
       limit: params.limit,
       listStatus: 'listed',
@@ -35,12 +35,12 @@ export class WalletService {
    * @param {Object} params - Object like instance {offset: 0, limit: 100}
    * @returns
    */
-  getUnlistedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getUnlistedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
       `Wallet Address:${this.getUnlistedNFTs.name}`
     )
-    return this.#getNFTs(walletAddress, {
+    return await this.#getNFTs(walletAddress, {
       offset: params.offset,
       limit: params.limit,
       listStatus: 'unlisted',
@@ -53,12 +53,12 @@ export class WalletService {
    * @param {Object} params - Object like instance {offset: 0, limit: 100}
    * @returns
    */
-  getListedAndUnlistedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getListedAndUnlistedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
       `Wallet Address:${this.getListedAndUnlistedNFTs.name}`
     )
-    return this.#getNFTs(walletAddress, {
+    return await this.#getNFTs(walletAddress, {
       offset: params.offset,
       limit: params.limit,
       listStatus: 'both',
@@ -71,13 +71,13 @@ export class WalletService {
    * @param {Object} params - Object like instance {offset: 0, limit: 100}
    * @returns
    */
-  getOffersMade(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getOffersMade(walletAddress, params = { offset: 0, limit: 100 }) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
       `Wallet Address:${this.getOffersMade.name}`
     )
 
-    return AxiosService.sendGet(
+    return await AxiosService.sendGet(
       `${this.apiUrl}/wallets/${walletAddress}/offers_made`,
       params
     )
@@ -89,13 +89,13 @@ export class WalletService {
    * @param {Object} params - Object like instance {offset: 0, limit: 100}
    * @returns
    */
-  getOffersReceived(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getOffersReceived(walletAddress, params = { offset: 0, limit: 100 }) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
       `Wallet Address:${this.getOffersReceived.name}`
     )
 
-    return AxiosService.sendGet(
+    return await AxiosService.sendGet(
       `${this.apiUrl}/wallets/${walletAddress}/offers_received`,
       params
     )
@@ -123,15 +123,15 @@ export class WalletService {
    * @param {Object} params - Object like instance {offset: 0, limit: 100, listStatus: 'both'} //listStatus maybe be: both/listed/unlisted
    * @returns
    */
-  #getNFTs(
+  async #getNFTs(
     walletAddress,
     params = { offset: 0, limit: 100, listStatus: null }
   ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       params.listStatus,
-      `params.listStatus:${this.getNFTs.name}`
+      `list status`
     )
-    return AxiosService.sendGet(
+    return await AxiosService.sendGet(
       `${this.apiUrl}/wallets/${walletAddress}/tokens`,
       params
     )
