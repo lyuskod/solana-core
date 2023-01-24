@@ -68,7 +68,7 @@ export class SolanaAccountService {
       })
     )
 
-    const response = await this.#connection.sendTransaction(transaction, [
+    await this.#connection.sendTransaction(transaction, [
       feePayerKeyPair,
       newAccountKeyPair,
     ])
@@ -83,6 +83,8 @@ export class SolanaAccountService {
           ]
         : null
     )
+
+    return newAccountKeyPair
   }
 
   /**
