@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals'
-import { MagicEdenCollectionService } from '../../services/magic-eden/collection.js'
+import { MagicEdenCollectionService } from '../../services/me/collection.js'
 const testData = {
   valid: {
     apiUrlHttps: 'https://api-mainnet.magiceden.dev/v2',

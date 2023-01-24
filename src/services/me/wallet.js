@@ -1,7 +1,7 @@
 import { AxiosService } from '../axios/service.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
 
-export class WalletService {
+export class MagicEdenWalletService {
   constructor(apiUrl) {
     this.apiUrl = apiUrl
   }

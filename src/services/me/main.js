@@ -1,5 +1,5 @@
 import { MagicEdenNFTService } from './nft.js'
-import { WalletService } from './wallet.js'
+import { MagicEdenWalletService } from './wallet.js'
 import { MagicEdenCollectionService } from './collection.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
 
@@ -13,7 +13,7 @@ export class MagicEdenMainService {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl)
     this.#apiUrl = apiUrl
     this.#nftService = new MagicEdenNFTService(this.#apiUrl)
-    this.#walletService = new WalletService(this.#apiUrl)
+    this.#walletService = new MagicEdenWalletService(this.#apiUrl)
     this.#collectionService = new MagicEdenCollectionService(this.#apiUrl)
   }
 
@@ -27,7 +27,7 @@ export class MagicEdenMainService {
 
   /**
    * @description Get ME wallet service object
-   * @returns {WalletService}
+   * @returns {MagicEdenWalletService}
    */
   getWalletService() {
     return this.#walletService
