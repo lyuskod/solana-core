@@ -1,16 +1,20 @@
 import { NFTService } from './nft-service.js'
 import { WalletService } from './wallet-service.js'
 import { CollectionService } from './collection-service.js'
+import { ErrorHelper } from '../../helpers/error-helper.js'
 
 export class MEApiService {
   #nftService
   #walletService
   #collectionService
+  #apiUrl
 
   constructor(apiUrl) {
-    this.#nftService = new NFTService(apiUrl)
-    this.#walletService = new WalletService(apiUrl)
-    this.#collectionService = new CollectionService(apiUrl)
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl)
+    this.#apiUrl = apiUrl
+    this.#nftService = new NFTService(this.#apiUrl)
+    this.#walletService = new WalletService(this.#apiUrl)
+    this.#collectionService = new CollectionService(this.#apiUrl)
   }
 
   /**
