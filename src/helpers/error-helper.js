@@ -12,4 +12,12 @@ export class ErrorHelper {
       )
     }
   }
+
+  static throwErrorIfArrayIsEmptyOrNull(array, arrayName = '') {
+    if (array == null || array.length == 0) {
+      throw new Error(
+        `${arrayName ? arrayName : ''} array cannot be null or empty`
+      )
+    }
+  }
 }

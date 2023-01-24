@@ -33,18 +33,20 @@ export class WalletService {
    * @description Fetch ME wallet unlisted NFTs by params
    * @param {String} walletAddress - Wallet Address (UUID)
    * @param {Object} params - Object like instance {offset: 0, limit: 100}
-   * @returns
+   * @returns {Array<any>}
    */
   async getUnlistedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
       `Wallet Address:${this.getUnlistedNFTs.name}`
     )
-    return await this.#getNFTs(walletAddress, {
+    const unlistedNfts = await this.#getNFTs(walletAddress, {
       offset: params.offset,
       limit: params.limit,
       listStatus: 'unlisted',
     })
+
+    return unlistedNfts.data
   }
 
   /**
