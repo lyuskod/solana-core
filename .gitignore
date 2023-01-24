@@ -94,3 +94,4 @@ volumes/app/*
 volumes/db/*
 sandbox.js
 script.js
+config.json
