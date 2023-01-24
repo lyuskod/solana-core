@@ -1,6 +1,5 @@
 import { Connection, clusterApiUrl } from '@solana/web3.js'
-import { SolanaAccountService } from './account-service.js'
-import { KeyPairService } from './keypair-service.js'
+import { SolanaKeyPairService } from './keypair-service.js'
 import { SolanaTransactionService } from './transaction-service.js'
 import { LoggerTool } from '../../tools/logger-tool.js'
 import { SolanaValidatorService } from './validator-service.js'
@@ -26,7 +25,7 @@ export class SolanaTestConnectionService {
     this.#network = network
     this.#connection = new Connection(clusterApiUrl(this.#network))
     this.#accountService = new SolanaTestAccountService(this.#network)
-    this.#keyPairService = new KeyPairService(this.#network)
+    this.#keyPairService = new SolanaKeyPairService(this.#network)
     this.#transactionService = new SolanaTransactionService(
       this.#connection,
       this.#network

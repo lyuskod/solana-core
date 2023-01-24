@@ -1,6 +1,17 @@
-import { PublicKey, LAMPORTS_PER_SOL } from '@solana/web3.js'
+import {
+  PublicKey,
+  LAMPORTS_PER_SOL,
+  Keypair,
+  Transaction,
+  SystemProgram,
+} from '@solana/web3.js'
+import { NATIVE_MINT, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { LoggerTool } from '../../tools/logger-tool.js'
 import { SolanaTestAccountService } from './test-account-service.js'
+import { base58_to_binary, binary_to_base58 } from 'base58-js'
+import { ACCOUNT_SIZE } from '@solana/spl-token'
+import { getMinimumBalanceForRentExemptAccount } from '@solana/spl-token'
+import { createInitializeAccountInstruction } from '@solana/spl-token'
 
 export class SolanaAccountService {
   #connection
@@ -9,6 +20,71 @@ export class SolanaAccountService {
   constructor(connection, network) {
     this.#network = network
     this.#connection = connection
+  }
+
+  async createRandomAccount(
+    feePayerPrivateKey,
+    log_opts = { logCreatedAccount: false }
+  ) {
+    let feePayerKeyPair = Keypair.fromSecretKey(
+      base58_to_binary(feePayerPrivateKey)
+    )
+    let newAccountKeyPair = Keypair.generate()
+
+    LoggerTool.silly(
+      this.#serviceName,
+      `(${this.#network})[READY] Create random account`,
+      log_opts.logCreatedAccount
+        ? [
+            [
+              'New data',
+              newAccountKeyPair.publicKey.toBase58(),
+              binary_to_base58(newAccountKeyPair.secretKey),
+            ],
+            [
+              'Fee payer data',
+              feePayerKeyPair.publicKey.toBase58(),
+              feePayerPrivateKey,
+            ],
+          ]
+        : null
+    )
+    const transaction = new Transaction()
+    const lamports = await getMinimumBalanceForRentExemptAccount(
+      this.#connection
+    )
+    transaction.add(
+      SystemProgram.createAccount({
+        fromPubkey: feePayerKeyPair.publicKey,
+        newAccountPubkey: newAccountKeyPair.publicKey,
+        space: ACCOUNT_SIZE,
+        lamports: lamports,
+        programId: TOKEN_PROGRAM_ID,
+      }),
+      SystemProgram.transfer({
+        fromPubkey: feePayerKeyPair.publicKey,
+        toPubkey: newAccountKeyPair.publicKey,
+        lamports: lamports,
+      })
+    )
+
+    await this.#connection.sendTransaction(transaction, [
+      feePayerKeyPair,
+      newAccountKeyPair,
+    ])
+
+    LoggerTool.silly(
+      this.#serviceName,
+      `(${this.#network})[SUCCESS] Created random account`,
+      log_opts.logCreatedAccount
+        ? [
+            newAccountKeyPair.publicKey.toBase58(),
+            binary_to_base58(newAccountKeyPair.secretKey),
+          ]
+        : null
+    )
+
+    return newAccountKeyPair
   }
 
   /**
@@ -25,10 +101,10 @@ export class SolanaAccountService {
    * @param {String} publicKey - Account public key in String
    * @returns
    */
-  async getBalance(publicKey, opts = { logBalance: false }) {
+  async getBalance(publicKey) {
     LoggerTool.silly(
       this.#serviceName,
-      `(${this.#network}) Get account balance by public key`,
+      `(${this.#network})[READY] Get account balance by public key`,
       publicKey
     )
 
@@ -36,14 +112,12 @@ export class SolanaAccountService {
       (await this.#connection.getBalance(new PublicKey(publicKey))) /
       LAMPORTS_PER_SOL
 
-    if (opts.logBalance) {
-      LoggerTool.silly(
-        this.#serviceName,
-        `(${this.#network}) Balance in sol`,
-        publicKey,
-        balance
-      )
-    }
+    LoggerTool.silly(
+      this.#serviceName,
+      `(${this.#network})[SUCCESS] Get account balance by public key`,
+      publicKey,
+      balance
+    )
     return balance
   }
 
@@ -55,21 +129,20 @@ export class SolanaAccountService {
   async getAccountInfo(publicKey, opts = { logAccountInfo: false }) {
     LoggerTool.silly(
       this.#serviceName,
-      `(${this.#network}) Get account info by public key`,
+      `(${this.#network})[READY] Get account info by public key`,
       publicKey
     )
 
     let accountInfo = await this.#connection.getAccountInfo(
       new PublicKey(publicKey)
     )
-    if (opts.logAccountInfo) {
-      LoggerTool.silly(
-        this.#serviceName,
-        `(${this.#network}) Account info`,
-        publicKey,
-        accountInfo
-      )
-    }
+
+    LoggerTool.silly(
+      this.#serviceName,
+      `(${this.#network})[SUCCESS] Get account info by public key`,
+      publicKey,
+      opts.logAccountInfo ? accountInfo : null
+    )
 
     return accountInfo
   }

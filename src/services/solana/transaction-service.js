@@ -11,7 +11,7 @@ export class SolanaTransactionService {
   #connection
   #transaction
   #network
-  #serviceName = "Transaction"
+  #serviceName = 'Transaction'
   constructor(connection, network) {
     this.#connection = connection
     this.#network = network
@@ -34,11 +34,11 @@ export class SolanaTransactionService {
   ) {
     LoggerTool.silly(
       this.#serviceName,
-      `(${this.#network}) Transfer '${opts.solAmount}': \n-from '${senderPublicKey}'\n-to '${receiverPublicKey}'\n`,
-      opts
+      `(${this.#network})[READY] Transfer SOL: '${
+        opts.solAmount
+      }': \n-from '${senderPublicKey}'\n-to '${receiverPublicKey}'\n`
     )
     let senderKeyPairSecret = opts.secretKeyByteArray
-
     this.#transaction = new Transaction()
     this.#transaction.add(
       SystemProgram.transfer({
@@ -48,10 +48,18 @@ export class SolanaTransactionService {
       })
     )
 
-    return await sendAndConfirmTransaction(
+    const response = await sendAndConfirmTransaction(
       this.#connection,
       this.#transaction,
       [senderKeyPairSecret]
     )
+
+    LoggerTool.silly(
+      this.#serviceName,
+      `(${this.#network})[SUCCESS] Transfer SOL: '${
+        opts.solAmount
+      }': \n-from '${senderPublicKey}'\n-to '${receiverPublicKey}'\n`
+    )
+    return response
   }
 }

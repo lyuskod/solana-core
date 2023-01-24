@@ -34,8 +34,16 @@ export class SolanaTestAccountService {
       logPrivateKey: false,
     }
   ) {
-    this.#transaction = new Transaction()
+    LoggerTool.silly(
+      this.#serviceName,
+      `(${
+        this.#network
+      })[READY] Create test account with ${solBalance} SOL airdrop`,
+      log_opts.logPublicKey ? publicKey : null,
+      log_opts.logPrivateKey ? secretKey : null
+    )
 
+    this.#transaction = new Transaction()
     const kp = Keypair.generate()
     const publicKey = kp.publicKey.toBase58()
     const secretKey = binary_to_base58(kp.secretKey)
@@ -43,7 +51,7 @@ export class SolanaTestAccountService {
     if (Object.values(log_opts).find((value) => value)) {
       LoggerTool.silly(
         this.#serviceName,
-        `(${this.#network}) Created account data`,
+        `(${this.#network})[SUCCESS] Created account data`,
         log_opts.logPublicKey ? publicKey : null,
         log_opts.logPrivateKey ? secretKey : null
       )
@@ -58,7 +66,7 @@ export class SolanaTestAccountService {
 
     LoggerTool.silly(
       this.#serviceName,
-      `(${this.#network}) Requested airdrop: ${solBalance} SOL`,
+      `(${this.#network})[SUCCESS] Received airdrop: ${solBalance} SOL`,
       log_opts.logPublicKey ? publicKey.toBase58 : null
     )
 
@@ -72,7 +80,7 @@ export class SolanaTestAccountService {
   ) {
     LoggerTool.silly(
       this.#serviceName,
-      `(${this.#network}) Requesting airdrop`,
+      `(${this.#network})[READY] Requesting airdrop`,
       publicKeyString,
       solAmount
     )
@@ -94,7 +102,7 @@ export class SolanaTestAccountService {
 
     LoggerTool.silly(
       this.#serviceName,
-      `(${this.#network}) Requested airdrop: ${solAmount} SOL`,
+      `(${this.#network})[SUCCESS] Requesting airdrop`,
       publicKeyString,
       solAmount
     )
