@@ -1,8 +1,9 @@
 import { AxiosService } from '../axios/service.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
 
-export class CollectionService {
+export class MagicEdenCollectionService {
   constructor(apiUrl) {
+    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl)
     this.apiUrl = `${apiUrl}/collections`
   }
 
@@ -11,12 +12,16 @@ export class CollectionService {
    * @param {String} symbol - Collection symbol (String)
    * @returns
    */
-  getInfoByCollectionSymbol(symbol) {
+  async getCollectionInfoByCollectionSymbol(symbol) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       symbol,
-      `Symbol:${this.getInfoByCollectionSymbol.name}`
+      `NFT Collection Symbol`
     )
-    return AxiosService.sendGet(`${this.apiUrl}/${symbol}`, {})
+    const collectionSymbol = await AxiosService.sendGet(
+      `${this.apiUrl}/${symbol}`,
+      {}
+    )
+    return collectionSymbol.data
   }
 
   /**
@@ -30,10 +35,7 @@ export class CollectionService {
       symbol,
       `Symbol:${this.getActivities.name}`
     )
-    return AxiosService.sendGet(
-      `${this.apiUrl}/${symbol}/activities`,
-      params
-    )
+    return AxiosService.sendGet(`${this.apiUrl}/${symbol}/activities`, params)
   }
 
   /**

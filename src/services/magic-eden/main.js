@@ -1,9 +1,9 @@
-import { NFTService } from './nft-service.js'
-import { WalletService } from './wallet-service.js'
-import { CollectionService } from './collection-service.js'
+import { MagicEdenNFTService } from './nft.js'
+import { WalletService } from './wallet.js'
+import { MagicEdenCollectionService } from './collection.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
 
-export class MEApiService {
+export class MagicEdenMainService {
   #nftService
   #walletService
   #collectionService
@@ -12,14 +12,14 @@ export class MEApiService {
   constructor(apiUrl) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl)
     this.#apiUrl = apiUrl
-    this.#nftService = new NFTService(this.#apiUrl)
+    this.#nftService = new MagicEdenNFTService(this.#apiUrl)
     this.#walletService = new WalletService(this.#apiUrl)
-    this.#collectionService = new CollectionService(this.#apiUrl)
+    this.#collectionService = new MagicEdenCollectionService(this.#apiUrl)
   }
 
   /**
    * @description Get ME nft service object
-   * @returns {NFTService}
+   * @returns {MagicEdenNFTService}
    */
   getNFTService() {
     return this.#nftService
@@ -35,7 +35,7 @@ export class MEApiService {
 
   /**
    * @description Get ME collection service object
-   * @returns {CollectionService}
+   * @returns {MagicEdenCollectionService}
    */
   getCollectionService() {
     return this.#collectionService

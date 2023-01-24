@@ -3,7 +3,7 @@ import axios from 'axios'
 export class AxiosService {
   constructor() {
     if (this instanceof AxiosService) {
-      throw Error('A static class cannot be instantiated.')
+      throw Error(`${AxiosService.name} static class cannot be instantiated.`)
     }
   }
 
@@ -11,7 +11,7 @@ export class AxiosService {
    * @description Send GET Axios request by params
    * @param {String} url - URL to call
    * @param {Object} params - Params in object-like instance (e.g. {name: 'Tom'})
-   * @returns
+   * @returns {Promise<AxiosResponse<any, any>>}
    */
   static sendGet(url, params) {
     if (!(params == null || params == '' || params == {})) {
@@ -27,7 +27,7 @@ export class AxiosService {
   /**
    * @description (Internal) Format params from object-like instance into String format (e.g. 'name=Tome&age=19')
    * @param {Object} params Params in object-like instance (e.g. {name: 'Tom'})
-   * @returns
+   * @returns {Array<String>}
    */
   static #formatGetParamsIntoString(params) {
     if (!(params instanceof Object)) {
@@ -37,10 +37,8 @@ export class AxiosService {
     }
 
     let keys = Object.keys(params)
-    if (Object.keys.length == 0) {
-      return ''
-    }
-
-    return keys.map((key) => `${key}=${params[key]}`).join('&')
+    return keys.length == 0
+      ? ''
+      : keys.map((key) => `${key}=${params[key]}`).join('&')
   }
 }
