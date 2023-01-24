@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-import { ErrorHelper } from './error-helper'
+import { ErrorHelper } from './error-helper.js'
 import fs from 'fs'
 dotenv.config()
 
@@ -11,23 +11,47 @@ export class ConfigHelper {
     }
   }
 
-  static getFeePayerPublicKey(){
+  /**
+   *
+   * @returns {String}
+   */
+  static getFeePayerPublicKey() {
     return ConfigHelper.#readConfig().feePayerPublicKey
   }
 
-  static getFeePayerPrivateKey(){
+  /**
+   *
+   * @returns {String}
+   */
+  static getFeePayerPrivateKey() {
     return ConfigHelper.#readConfig().feePayerPrivateKey
   }
 
-  static getExpectedSalesCount(){
-    return +(ConfigHelper.#readConfig().expectedSalesCount)
+  static getExpectedSalesCount() {
+    return +ConfigHelper.#readConfig().expectedSalesCount
   }
 
-  static getExpectedNFTsType(){
+  static getPricePerSaleInSOL() {
+    return +ConfigHelper.#readConfig().expectedSalesCount
+  }
+
+  /**
+   *
+   * @returns {String}
+   */
+  static getExpectedNFTsType() {
     return ConfigHelper.#readConfig().useNFTsThatAre
   }
 
-  static #readConfig(){
+  /**
+   *
+   * @returns {String}
+   */
+  static getAuthority() {
+    return ConfigHelper.#readConfig().useNFTsThatAreHaveAuthority
+  }
+
+  static #readConfig() {
     return JSON.parse(fs.readFileSync(ConfigHelper.#configPath))
   }
 }

@@ -101,7 +101,7 @@ export class SolanaAccountService {
    * @param {String} publicKey - Account public key in String
    * @returns
    */
-  async getBalance(publicKey, opts = { logBalance: false }) {
+  async getBalance(publicKey) {
     LoggerTool.silly(
       this.#serviceName,
       `(${this.#network})[READY] Get account balance by public key`,
@@ -116,7 +116,7 @@ export class SolanaAccountService {
       this.#serviceName,
       `(${this.#network})[SUCCESS] Get account balance by public key`,
       publicKey,
-      opts.logBalance ? balance : null
+      balance
     )
     return balance
   }

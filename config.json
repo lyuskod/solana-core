@@ -1,6 +1,8 @@
 {
-    "feePayerPublicKey": "",
-    "feePayerPrivateKey": "",
-    "expectedSalesCount": 1,
-    "useNFTsThatAre": "unlisted"
+  "feePayerPublicKey": "",
+  "feePayerPrivateKey": "",
+  "expectedSalesCount": 1,
+  "useNFTsThatAre": "unlisted",
+  "useNFTsThatAreHaveAuthority": "",
+  "pricePerSaleInSOL": 1000 
 }
