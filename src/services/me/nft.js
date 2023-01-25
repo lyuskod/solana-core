@@ -1,7 +1,7 @@
 import { AxiosService } from '../axios/service.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
 
-export class NFTService {
+export class MagicEdenNFTService {
   constructor(apiUrl) {
     this.apiUrl = `${apiUrl}/tokens`
   }
