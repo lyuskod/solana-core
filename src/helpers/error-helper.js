@@ -11,7 +11,7 @@ export class ErrorHelper {
   }
 
   static throwErrorIfUndefinedNullOrEmpty(value, valueName = '') {
-    if (!value) {
+    if (value == null || value == undefined || value == '') {
       LoggerTool.error(
         ErrorHelper.name,
         `${
@@ -22,6 +22,18 @@ export class ErrorHelper {
         `${
           valueName ? `${valueName} ` : ''
         }value cannot be null/undefined/empty`
+      )
+    }
+  }
+
+  static throwErrorIfValueIsUndefinedOrNull(value, valueName = '') {
+    if (value == null || value == undefined) {
+      LoggerTool.error(
+        ErrorHelper.name,
+        `${valueName ? `${valueName} ` : ''}value cannot be null/undefined`
+      )
+      throw new Error(
+        `${valueName ? `${valueName} ` : ''}value cannot be null/undefined`
       )
     }
   }
@@ -55,6 +67,21 @@ export class ErrorHelper {
         `${
           valueName ? `${valueName} ` : ''
         }value is not in url format. Provided value is: ${value}`
+      )
+    }
+  }
+
+  static throwErrorIfValueIsNegative(value, valueName = '') {
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(value)
+    if (value < 0) {
+      LoggerTool.error(
+        ErrorHelper.name,
+        `${valueName ? `${valueName} ` : ''}value cannot be negative`
+      )
+      throw new Error(
+        `${
+          valueName ? `${valueName} ` : ''
+        }value cannot be negative. Provided value is: ${value}`
       )
     }
   }
