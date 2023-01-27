@@ -1,10 +1,12 @@
 import { ErrorHelper } from '../../helpers/error.js'
 import { Logger } from '../../tools/logger.js'
+import { AxiosServiceHub } from '../axios/hub.js'
 
 export class MagicEdenWalletService {
   #currentServiceName = 'ME Wallet'
   constructor(apiUrl) {
-    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl)
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME Wallet API Url')
+    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME Wallet API Url')
     this.apiUrl = apiUrl
   }
 
@@ -231,7 +233,7 @@ export class MagicEdenWalletService {
 
     let fetchedOffersMade = null
     try {
-      fetchedOffersMade = await AxiosService.sendGet(
+      fetchedOffersMade = await AxiosServiceHub.sendGet(
         `${this.apiUrl}/wallets/${walletAddress}/offers_made`,
         args
       )
@@ -294,7 +296,7 @@ export class MagicEdenWalletService {
 
     let fetchedOffersReceived = null
     try {
-      fetchedOffersReceived = await AxiosService.sendGet(
+      fetchedOffersReceived = await AxiosServiceHub.sendGet(
         `${this.apiUrl}/wallets/${walletAddress}/offers_received`,
         args
       )
@@ -348,7 +350,7 @@ export class MagicEdenWalletService {
 
     let fetchedWalletBalance = null
     try {
-      fetchedWalletBalance = await AxiosService.sendGet(
+      fetchedWalletBalance = await AxiosServiceHub.sendGet(
         `${this.apiUrl}/wallets/${walletAddress}/escrow_balance`
       )
     } catch (e) {
@@ -382,7 +384,7 @@ export class MagicEdenWalletService {
     args = { offset: 0, limit: 100, listStatus: null }
   ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(args.listStatus, `list status`)
-    return await AxiosService.sendGet(
+    return await AxiosServiceHub.sendGet(
       `${this.apiUrl}/wallets/${walletAddress}/tokens`,
       args
     )

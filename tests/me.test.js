@@ -366,3 +366,560 @@ test('[ME NFT]: User cant fetch an NFT metadata by mint address', async () => {
   expect(nftMetadata.mintAddress).toEqual(nftMintAddress)
   expect(nftMetadata.name).toEqual('Darknet User #2173')
 })
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: User cant create wallet instance if api url is undefined/null/empty',
+  (data) => {
+    try {
+      new MagicEdenWalletService(data.value)
+    } catch (e) {
+      expect(e.message).toMatch(
+        'ME Wallet API Url value cannot be null/undefined/empty'
+      )
+    }
+  }
+)
+
+test.each(invalidUrls)(
+  '[ME Wallet]: User cant create wallet instance if api url is not in url format',
+  (data) => {
+    try {
+      new MagicEdenWalletService(data.value)
+    } catch (e) {
+      expect(e.message).toMatch(
+        `ME Wallet API Url value is not in url format. Provided value is: ${data.value}`
+      )
+    }
+  }
+)
+
+test('[ME Wallet]: User can fetch wallet balance', async () => {
+  const walletAddress = 'Gf8gY7apY1xdYVbghoVMuPiYifRh1hfrMVnvQwYUCSYZ'
+  const balance = await hubService
+    .getWalletService()
+    .getBalanceForWalletAddress(walletAddress)
+  expect(balance.balance).not.toBe(null)
+})
+
+test('[ME Wallet]: User receives a 0 balance calling get balance for invalid wallet address', async () => {
+  const walletAddress = 'Gf8gY7apY1xdYVbghoVMuPiYifRh1hfrMVnvQwYUCzYZ'
+  const balance = await hubService
+    .getWalletService()
+    .getBalanceForWalletAddress(walletAddress)
+  expect(balance.balance).not.toBe(null)
+})
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown when user is trying to get a balance by providing an null/undefined/empty wallet address',
+  async (data) => {
+    try {
+      await hubService.getWalletService().getBalanceForWalletAddress(data.value)
+    } catch (e) {
+      expect(e.message).toMatch(
+        'Wallet address to get balance of value cannot be null/undefined/empty'
+      )
+    }
+  }
+)
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown when user is trying to fetch listed & unlisted nfts with undefined/null/empty nft mint address',
+  async (data) => {
+    try {
+      await hubService
+        .getWalletService()
+        .getListedAndUnlistedNFTsByWalletAddress(data.value)
+    } catch (e) {
+      expect(e.message).toMatch(
+        'Wallet Address for listed NFTs value cannot be null/undefined/empty'
+      )
+    }
+  }
+)
+
+test('[ME Wallet]: User can fetch listed & unlisted NFTs by wallet', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+  const listedAndUnlistedNfts = await hubService
+    .getWalletService()
+    .getListedAndUnlistedNFTsByWalletAddress(walletAddress)
+  expect(listedAndUnlistedNfts).not.toBe(null)
+
+  const listedNfts = listedAndUnlistedNfts.filter(
+    (nft) => nft.listStatus === 'listed'
+  )
+  const unlistedNfts = listedAndUnlistedNfts.filter(
+    (nft) => nft.listStatus === 'unlisted'
+  )
+  expect(listedNfts.length).toBeGreaterThanOrEqual(1)
+  expect(unlistedNfts.length).toBeGreaterThanOrEqual(1)
+})
+
+test('[ME Wallet]: User can fetch listed & unlisted NFTs by wallet and offset them', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+  const listedAndUnlistedNfts = await hubService
+    .getWalletService()
+    .getListedAndUnlistedNFTsByWalletAddress(walletAddress, {
+      offset: 0,
+      limit: 2,
+    })
+  const missedNFT = listedAndUnlistedNfts[0]
+  const offsetedNFTs = await hubService
+    .getWalletService()
+    .getListedAndUnlistedNFTsByWalletAddress(walletAddress, {
+      offset: 1,
+      limit: 2,
+    })
+  expect(offsetedNFTs.includes(missedNFT)).toBe(false)
+})
+
+test.each(expectedLimits)(
+  '[ME Wallet]: User can fetch listed & unlisted NFTs by wallet and limit them',
+  async (data) => {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    const listedAndUnlistedNfts = await hubService
+      .getWalletService()
+      .getListedAndUnlistedNFTsByWalletAddress(walletAddress, {
+        offset: 0,
+        limit: data.value,
+      })
+    expect(listedAndUnlistedNfts).not.toBe(null)
+    expect(listedAndUnlistedNfts.length).toEqual(data.value)
+  }
+)
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid offset value while fetching listed & unlisted nfts',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getUnlistedNFTsByWalletAddress(walletAddress, {
+          offset: data.value,
+          limit: 2,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Offset value cannot be null/undefined')
+    }
+  }
+)
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid limit value while fetching listed & unlisted nfts',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getUnlistedNFTsByWalletAddress(walletAddress, {
+          offset: 0,
+          limit: data.value,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Limit value cannot be null/undefined')
+    }
+  }
+)
+
+test('[ME Wallet]: Error is thrown if user provides a negative limit value while fetching listed & unlisted nfts', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getUnlistedNFTsByWalletAddress(walletAddress, {
+        offset: 0,
+        limit: -1,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Limit value cannot be negative')
+  }
+})
+
+test('[ME Wallet]: Error is thrown if user provides a negative offset value while fetching listed & unlisted nfts', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getUnlistedNFTsByWalletAddress(walletAddress, {
+        offset: -1,
+        limit: 2,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Offset value cannot be negative')
+  }
+})
+
+test('[ME Wallet]: User can fetch listed NFTs by wallet', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+  const listedNfts = await hubService
+    .getWalletService()
+    .getListedNFTsByWalletAddress(walletAddress)
+  expect(listedNfts).not.toBe(null)
+  expect(listedNfts.length).toBeGreaterThanOrEqual(1)
+  const size = listedNfts.length
+  const filtered = listedNfts.filter((nft) => nft.listStatus == 'listed')
+  expect(filtered.length).toEqual(size)
+})
+
+test('[ME Wallet]: User can fetch listed by wallet and offset them', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+  const listedNfts = await hubService
+    .getWalletService()
+    .getListedNFTsByWalletAddress(walletAddress, {
+      offset: 0,
+      limit: 2,
+    })
+  const missedNFT = listedNfts[0]
+  const offsetedNFTs = await hubService
+    .getWalletService()
+    .getListedNFTsByWalletAddress(walletAddress, {
+      offset: 1,
+      limit: 2,
+    })
+  expect(offsetedNFTs.includes(missedNFT)).toBe(false)
+})
+
+test.each(expectedLimits)(
+  '[ME Wallet]: User can fetch listed NFTs and limit them',
+  async (data) => {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    const listedNfts = await hubService
+      .getWalletService()
+      .getListedNFTsByWalletAddress(walletAddress, {
+        offset: 0,
+        limit: data.value,
+      })
+    expect(listedNfts).not.toBe(null)
+    expect(listedNfts.length).toEqual(data.value)
+  }
+)
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid offset value while fetching listed nfts',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getListedNFTsByWalletAddress(walletAddress, {
+          offset: data.value,
+          limit: 2,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Offset value cannot be null/undefined')
+    }
+  }
+)
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid limit value while fetching listed nfts',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getListedNFTsByWalletAddress(walletAddress, {
+          offset: 0,
+          limit: data.value,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Limit value cannot be null/undefined')
+    }
+  }
+)
+
+test('[ME Wallet]: Error is thrown if user provides a negative limit value while fetching listednfts', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getListedNFTsByWalletAddress(walletAddress, {
+        offset: 0,
+        limit: -1,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Limit value cannot be negative')
+  }
+})
+
+test('[ME Wallet]: Error is thrown if user provides a negative offset value while fetching listed nfts', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getListedNFTsByWalletAddress(walletAddress, {
+        offset: -1,
+        limit: 2,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Offset value cannot be negative')
+  }
+})
+
+//test
+test('[ME Wallet]: User can fetch unlisted NFTs by wallet', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+  const unlistedNfts = await hubService
+    .getWalletService()
+    .getUnlistedNFTsByWalletAddress(walletAddress)
+  expect(unlistedNfts).not.toBe(null)
+  expect(unlistedNfts.length).toBeGreaterThanOrEqual(1)
+  const size = unlistedNfts.length
+  const filtered = unlistedNfts.filter((nft) => nft.listStatus == 'unlisted')
+  expect(filtered.length).toEqual(size)
+})
+
+test('[ME Wallet]: User can fetch unlisted by wallet and offset them', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+  const unlistedNfts = await hubService
+    .getWalletService()
+    .getUnlistedNFTsByWalletAddress(walletAddress, {
+      offset: 0,
+      limit: 2,
+    })
+  const missedNFT = unlistedNfts[0]
+  const offsetedNFTs = await hubService
+    .getWalletService()
+    .getUnlistedNFTsByWalletAddress(walletAddress, {
+      offset: 1,
+      limit: 2,
+    })
+  expect(offsetedNFTs.includes(missedNFT)).toBe(false)
+})
+
+test.each(expectedLimits)(
+  '[ME Wallet]: User can fetch unlisted NFTs and limit them',
+  async (data) => {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    const unlistedNfts = await hubService
+      .getWalletService()
+      .getUnlistedNFTsByWalletAddress(walletAddress, {
+        offset: 0,
+        limit: data.value,
+      })
+    expect(unlistedNfts).not.toBe(null)
+    expect(unlistedNfts.length).toEqual(data.value)
+  }
+)
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid offset value while fetching unlisted nfts',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getUnlistedNFTsByWalletAddress(walletAddress, {
+          offset: data.value,
+          limit: 2,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Offset value cannot be null/undefined')
+    }
+  }
+)
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid limit value while fetching unlisted nfts',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getUnlistedNFTsByWalletAddress(walletAddress, {
+          offset: 0,
+          limit: data.value,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Limit value cannot be null/undefined')
+    }
+  }
+)
+
+test('[ME Wallet]: Error is thrown if user provides a negative limit value while fetching unlisted nfts', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getUnlistedNFTsByWalletAddress(walletAddress, {
+        offset: 0,
+        limit: -1,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Limit value cannot be negative')
+  }
+})
+
+test('[ME Wallet]: Error is thrown if user provides a negative offset value while fetching unlisted nfts', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getUnlistedNFTsByWalletAddress(walletAddress, {
+        offset: -1,
+        limit: 2,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Offset value cannot be negative')
+  }
+})
+
+test('[ME Wallet]: User can fetch offers made by wallet address', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+  const offersMade = await hubService
+    .getWalletService()
+    .getOffersMadeByWalletAddress(walletAddress)
+  expect(offersMade).not.toBe(null)
+  expect(offersMade).toEqual([])
+})
+
+test('[ME Wallet]: User can fetch offers made by invalid wallet address', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1ysF'
+  const offersMade = await hubService
+    .getWalletService()
+    .getOffersMadeByWalletAddress(walletAddress)
+  expect(offersMade).not.toBe(null)
+  expect(offersMade).toEqual([])
+})
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid offset value while fetching offers made',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getOffersMadeByWalletAddress(walletAddress, {
+          offset: data.value,
+          limit: 2,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Offset value cannot be null/undefined')
+    }
+  }
+)
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid limit value while fetching offers made',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getOffersMadeByWalletAddress(walletAddress, {
+          offset: 0,
+          limit: data.value,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Limit value cannot be null/undefined')
+    }
+  }
+)
+
+test('[ME Wallet]: Error is thrown if user provides a negative limit value while fetching offers made', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getOffersMadeByWalletAddress(walletAddress, {
+        offset: 0,
+        limit: -1,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Limit value cannot be negative')
+  }
+})
+
+test('[ME Wallet]: Error is thrown if user provides a negative offset value while fetching offers made', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getOffersMadeByWalletAddress(walletAddress, {
+        offset: -1,
+        limit: 2,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Offset value cannot be negative')
+  }
+})
+
+test('[ME Wallet]: User can fetch offers received by wallet address', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+  const offersMade = await hubService
+    .getWalletService()
+    .getOffersReceivedByWalletAddress(walletAddress)
+  expect(offersMade).not.toBe(null)
+  expect(offersMade).toEqual([])
+})
+
+test('[ME Wallet]: User can fetch offers received by invalid wallet address', async () => {
+  const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1ysF'
+  const offersMade = await hubService
+    .getWalletService()
+    .getOffersReceivedByWalletAddress(walletAddress)
+  expect(offersMade).not.toBe(null)
+  expect(offersMade).toEqual([])
+})
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid offset value while fetching offers received',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getOffersReceivedByWalletAddress(walletAddress, {
+          offset: data.value,
+          limit: 2,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Offset value cannot be null/undefined')
+    }
+  }
+)
+
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME Wallet]: Error is thrown if user provides an invalid limit value while fetching offers received',
+  async (data) => {
+    try {
+      const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+      await hubService
+        .getWalletService()
+        .getOffersReceivedByWalletAddress(walletAddress, {
+          offset: 0,
+          limit: data.value,
+        })
+    } catch (e) {
+      expect(e.message).toMatch('Limit value cannot be null/undefined')
+    }
+  }
+)
+
+test('[ME Wallet]: Error is thrown if user provides a negative limit value while fetching offers received', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getOffersReceivedByWalletAddress(walletAddress, {
+        offset: 0,
+        limit: -1,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Limit value cannot be negative')
+  }
+})
+
+test('[ME Wallet]: Error is thrown if user provides a negative offset value while fetching offers received', async () => {
+  try {
+    const walletAddress = '6RGNXDdbA4kVcLdXHnAn81M81UDmSiAmwnseAWLw1yuF'
+    await hubService
+      .getWalletService()
+      .getOffersReceivedByWalletAddress(walletAddress, {
+        offset: -1,
+        limit: 2,
+      })
+  } catch (e) {
+    expect(e.message).toMatch('Offset value cannot be negative')
+  }
+})

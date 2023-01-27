@@ -6,7 +6,7 @@ export class MagicEdenNFTService {
   #currentServiceName = 'ME NFT'
   constructor(apiUrl) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME NFT API Url')
-    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl)
+    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME NFT API Url')
     this.apiUrl = `${apiUrl}/tokens`
   }
 
