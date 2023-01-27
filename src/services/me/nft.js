@@ -5,7 +5,8 @@ import { Logger } from '../../tools/logger.js'
 export class MagicEdenNFTService {
   #currentServiceName = 'ME NFT'
   constructor(apiUrl) {
-    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl)
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME NFT API Url')
+    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl)
     this.apiUrl = `${apiUrl}/tokens`
   }
 
@@ -22,7 +23,7 @@ export class MagicEdenNFTService {
   ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       nftMintAddress,
-      `NFT Mint Address`
+      'NFT Mint Address'
     )
 
     Logger.silly(
@@ -31,6 +32,7 @@ export class MagicEdenNFTService {
       nftMintAddress
     )
 
+    console.log(this.apiUrl)
     let fetchedNFTInfo = await AxiosServiceHub.sendGet(
       `${this.apiUrl}/${nftMintAddress}`,
       {}

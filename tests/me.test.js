@@ -304,3 +304,65 @@ test('[ME Hub]: User can get the Wallet service', () => {
   expect(walletService).not.toBe(null)
   expect(walletService).toBeInstanceOf(MagicEdenWalletService)
 })
+
+test.each(valueErrorTestData)(
+  '[ME NFT]: Error is thrown when user is trying to create an ME NFT service and url is null/undefined/empty',
+  (data) => {
+    try {
+      hubService.getNFTService(data.type)
+    } catch (e) {
+      expect(e.message).toMatch(
+        'ME NFT API Url value cannot be null/undefined/empty'
+      )
+    }
+  }
+)
+
+test.each(invalidUrls)(
+  '[ME NFT]: Error is thrown when user is trying to create an ME NFT service and url is not in url format',
+  (data) => {
+    try {
+      hubService.getNFTService(data.type)
+    } catch (e) {
+      expect(e.message).toMatch(
+        `ME NFT API Url value is not in url format. Provided value is: ${data.value}`
+      )
+    }
+  }
+)
+const valueErrorTestDataWithEmpty = [
+  {
+    type: 'null',
+    value: null,
+  },
+  {
+    type: 'undefined',
+    value: undefined,
+  },
+  {
+    type: 'empty',
+    value: '',
+  },
+]
+test.each(valueErrorTestDataWithEmpty)(
+  '[ME NFT]: Error is thrown when users is trying to fetch an NFT by mint address but the mint address is null/undefined/empty',
+  async (data) => {
+    try {
+      await hubService.getNFTService().getNFTInfoByNFTMintAddress(data.value)
+    } catch (e) {
+      expect(e.message).toMatch(
+        'NFT Mint Address value cannot be null/undefined/empty'
+      )
+    }
+  }
+)
+
+test('[ME NFT]: User cant fetch an NFT metadata by mint address', async () => {
+  const nftMintAddress = '6uMJKRytbd2WyhhGidN7SDiE6HbbQ6b2ni7w2aT5FUdC'
+  const nftMetadata = await hubService
+    .getNFTService()
+    .getNFTInfoByNFTMintAddress(nftMintAddress)
+  expect(nftMetadata).not.toBe(null)
+  expect(nftMetadata.mintAddress).toEqual(nftMintAddress)
+  expect(nftMetadata.name).toEqual('Darknet User #2173')
+})

@@ -15,9 +15,14 @@ export class ErrorHelper {
       valueName ? `${valueName} ` : ''
     }value cannot be null/undefined/empty`
 
-    if (value == false) return
+    if (value instanceof Boolean) return
 
-    if (value == null || value == undefined || value == '') {
+    if (
+      value == null ||
+      value == undefined ||
+      value.length === 0 ||
+      value === ''
+    ) {
       Logger.error(ErrorHelper.#currentServiceName, errorMessage)
       throw new Error(errorMessage)
     }

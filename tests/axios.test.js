@@ -41,23 +41,25 @@ const invalidUrls = [
   {
     type: 'url is null',
     value: null,
-    expectedError: 'Axios URL value cannot be null/undefined/empty',
   },
   {
     type: 'url is empty',
     value: '',
-    expectedError: 'Invalid URL',
   },
   {
     type: 'url is undefined',
     value: undefined,
-    expectedError: 'Axios URL value cannot be null/undefined/empty',
   },
 ]
-test.each(invalidUrls)('[Axios]: Error is thrown if url is undefined/null/empty', async (data) => {
-  try {
-    await AxiosServiceHub.sendGet(data.value)
-  } catch (e) {
-    expect(e.message).toMatch(data.expectedError)
+test.each(invalidUrls)(
+  '[Axios]: Error is thrown if url is undefined/null/empty',
+  async (data) => {
+    try {
+      await AxiosServiceHub.sendGet(data.value)
+    } catch (e) {
+      expect(e.message).toMatch(
+        'Axios URL value cannot be null/undefined/empty'
+      )
+    }
   }
-})
+)
