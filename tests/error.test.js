@@ -98,6 +98,7 @@ test('[Error]: User cannot create an instance of ErrorHelper class', () => {
     )
   }
 })
+
 const valueErrorTestData = [
   {
     type: 'null',

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { ErrorHelper } from '../../helpers/error.js'
 import { Logger } from '../../tools/logger.js'
 
 export class AxiosServiceHub {
@@ -17,8 +18,11 @@ export class AxiosServiceHub {
    * @param {Object} params - Params in object-like instance (e.g. {name: 'Tom'})
    * @returns {Promise<AxiosResponse<any, any>>}
    */
-  static async sendGet(url, params) {
-    if (!(params == null || params == '' || params == {})) {
+  static async sendGet(url, params = {}) {
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(url, 'Axios URL')
+    if (
+      !(params == null || params == undefined || params == '' || params == {})
+    ) {
       url = `${url}?${this.#formatGetParamsIntoString(params)}`
     }
 
@@ -29,20 +33,10 @@ export class AxiosServiceHub {
       Object.keys(params).length ? params : null
     )
 
-    const response = await axios({
+    return await axios({
       method: 'get',
       url,
     })
-
-    Logger.silly(
-      this.#currentServiceName,
-      `[${
-        response.status == 200 ? 'SUCCESS' : 'ERROR'
-      }] Send GET Axios request`,
-      url,
-      Object.keys(params).length ? params : null
-    )
-    return response
   }
 
   /**
