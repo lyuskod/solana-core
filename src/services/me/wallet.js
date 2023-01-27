@@ -1,5 +1,5 @@
-import { AxiosService } from '../axios/service.js'
-import { ErrorHelper } from '../../helpers/error-helper.js'
+import { AxiosService } from '../axios/hub.js'
+import { ErrorHelper } from '../../helpers/error.js'
 import { Logger } from '../../tools/logger.js'
 
 export class MagicEdenWalletService {

@@ -1,7 +1,13 @@
 import { expect, test } from '@jest/globals'
-import { MagicEdenCollectionService } from '../src/services/me/collection'
+import { MagicEdenCollectionService } from '../src/services/me/collection.js'
+import { MagicEdenServiceHub } from '../src/services/me/hub.js'
+import { MagicEdenNFTService } from '../src/services/me/nft.js'
+import { MagicEdenWalletService } from '../src/services/me/wallet.js'
 
 const collectionService = new MagicEdenCollectionService(
+  'https://api-mainnet.magiceden.dev/v2'
+)
+const hubService = new MagicEdenServiceHub(
   'https://api-mainnet.magiceden.dev/v2'
 )
 
@@ -254,3 +260,47 @@ test.each(valueErrorTestData)(
     }
   }
 )
+
+test.each(valueErrorTestData)(
+  '[ME Hub]: Error is thrown when user is trying to create a ME Hub instance if url is null/empty/undefined',
+  (data) => {
+    try {
+      new MagicEdenServiceHub(data.value, data.type)
+    } catch (e) {
+      expect(e.message).toMatch(
+        'ME Hub API Url value cannot be null/undefined/empty'
+      )
+    }
+  }
+)
+
+test.each(invalidUrls)(
+  '[ME Hub]: Error is thrown when user is trying to create a ME Hub instance if url is not in url format',
+  (data) => {
+    try {
+      new MagicEdenServiceHub(data.value, data.type)
+    } catch (e) {
+      expect(e.message).toMatch(
+        `ME Hub API Url value is not in url format. Provided value is: ${data.value}`
+      )
+    }
+  }
+)
+
+test('[ME Hub]: User can get the NFT service', () => {
+  const nftService = hubService.getNFTService()
+  expect(nftService).not.toBe(null)
+  expect(nftService).toBeInstanceOf(MagicEdenNFTService)
+})
+
+test('[ME Hub]: User can get the Collection service', () => {
+  const collectionService = hubService.getCollectionService()
+  expect(collectionService).not.toBe(null)
+  expect(collectionService).toBeInstanceOf(MagicEdenCollectionService)
+})
+
+test('[ME Hub]: User can get the Wallet service', () => {
+  const walletService = hubService.getWalletService()
+  expect(walletService).not.toBe(null)
+  expect(walletService).toBeInstanceOf(MagicEdenWalletService)
+})

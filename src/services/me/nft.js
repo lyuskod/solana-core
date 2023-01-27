@@ -1,5 +1,5 @@
 import { AxiosServiceHub } from '../axios/hub.js'
-import { ErrorHelper } from '../../helpers/error-helper.js'
+import { ErrorHelper } from '../../helpers/error.js'
 import { Logger } from '../../tools/logger.js'
 
 export class MagicEdenNFTService {
