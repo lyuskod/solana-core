@@ -1,11 +1,12 @@
 import { AxiosServiceHub } from '../axios/hub.js'
-import { ErrorHelper } from '../../helpers/error-helper.js'
+import { ErrorHelper } from '../../helpers/error.js'
 import { Logger } from '../../tools/logger.js'
 
 export class MagicEdenCollectionService {
   #currentServiceName = 'ME Collection'
   constructor(apiUrl) {
-    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl)
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME Collection API Url')
+    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME Collection API Url')
     this.apiUrl = `${apiUrl}/collections`
   }
 
@@ -42,7 +43,7 @@ export class MagicEdenCollectionService {
         nftCollectionSymbol,
         e.message
       )
-      throw new Error(e.message)
+      throw new Error(`Get Collection info by collection symbol ${e.message}`)
     }
 
     Logger.silly(
@@ -69,10 +70,10 @@ export class MagicEdenCollectionService {
       nftCollectionSymbol,
       'Collection Symbol'
     )
-    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Offset')
-    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Limit')
-    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
-    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Get collection activities: Offset')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Get collection activities: Limit')
+    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Get collection activities: Offset')
+    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Get collection activities: Limit')
 
     Logger.silly(
       this.#currentServiceName,
