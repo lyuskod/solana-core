@@ -1,11 +1,11 @@
-import { LoggerTool } from '../tools/logger-tool.js'
+import { Logger } from '../tools/logger.js'
 
 export class ErrorHelper {
   static #currentServiceName = 'Error'
   constructor() {
     if (this instanceof ErrorHelper) {
       const errorMessage = `${ErrorHelper.name} static class cannot be instantiated.`
-      LoggerTool.error(ErrorHelper.name, errorMessage)
+      Logger.error(ErrorHelper.name, errorMessage)
       throw Error(errorMessage)
     }
   }
@@ -16,7 +16,7 @@ export class ErrorHelper {
     }value cannot be null/undefined/empty`
 
     if (!value) {
-      LoggerTool.error(ErrorHelper.#currentServiceName, errorMessage)
+      Logger.error(ErrorHelper.#currentServiceName, errorMessage)
       throw new Error(errorMessage)
     }
   }
@@ -27,7 +27,7 @@ export class ErrorHelper {
     }value cannot be null/undefined`
 
     if (value == null || value == undefined) {
-      LoggerTool.error(ErrorHelper.name, errorMessage)
+      Logger.error(ErrorHelper.name, errorMessage)
       throw new Error(errorMessage)
     }
   }
@@ -38,7 +38,7 @@ export class ErrorHelper {
     }array cannot be null/empty/undefined or have size equal to 0`
 
     if (!array || array.length == 0) {
-      LoggerTool.error(ErrorHelper.name, errorMessage)
+      Logger.error(ErrorHelper.name, errorMessage)
       throw new Error(errorMessage)
     }
   }
@@ -50,7 +50,7 @@ export class ErrorHelper {
     }value is not in url format. Provided value is: ${value}`
 
     if (!value.match(/^http|https:\/\/.*/)) {
-      LoggerTool.error(ErrorHelper.name, errorMessage)
+      Logger.error(ErrorHelper.name, errorMessage)
       throw new Error(errorMessage)
     }
   }
@@ -62,7 +62,7 @@ export class ErrorHelper {
     }value cannot be negative`
 
     if (value < 0) {
-      LoggerTool.error(ErrorHelper.name, errorMessage)
+      Logger.error(ErrorHelper.name, errorMessage)
       throw new Error(errorMessage)
     }
   }
