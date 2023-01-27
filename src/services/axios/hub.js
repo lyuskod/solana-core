@@ -1,9 +1,13 @@
 import axios from 'axios'
+import { Logger } from '../../tools/logger.js'
 
 export class AxiosServiceHub {
+  static #currentServiceName = 'Axios'
   constructor() {
     if (this instanceof AxiosServiceHub) {
-      throw Error(`${AxiosServiceHub.name} static class cannot be instantiated`)
+      const errorMessage = `${AxiosServiceHub.name} static class cannot be instantiated.`
+      Logger.error(AxiosServiceHub.name, errorMessage)
+      throw Error(errorMessage)
     }
   }
 
@@ -13,15 +17,32 @@ export class AxiosServiceHub {
    * @param {Object} params - Params in object-like instance (e.g. {name: 'Tom'})
    * @returns {Promise<AxiosResponse<any, any>>}
    */
-  static sendGet(url, params) {
+  static async sendGet(url, params) {
     if (!(params == null || params == '' || params == {})) {
       url = `${url}?${this.#formatGetParamsIntoString(params)}`
     }
 
-    return axios({
+    Logger.silly(
+      this.#currentServiceName,
+      '[READY] Send GET Axios request',
+      url,
+      Object.keys(params).length ? params : null
+    )
+
+    const response = await axios({
       method: 'get',
       url,
     })
+
+    Logger.silly(
+      this.#currentServiceName,
+      `[${
+        response.status == 200 ? 'SUCCESS' : 'ERROR'
+      }] Send GET Axios request`,
+      url,
+      Object.keys(params).length ? params : null
+    )
+    return response
   }
 
   /**
