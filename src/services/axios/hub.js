@@ -1,9 +1,9 @@
 import axios from 'axios'
 
-export class AxiosService {
+export class AxiosServiceHub {
   constructor() {
-    if (this instanceof AxiosService) {
-      throw Error(`${AxiosService.name} static class cannot be instantiated.`)
+    if (this instanceof AxiosServiceHub) {
+      throw Error(`${AxiosServiceHub.name} static class cannot be instantiated`)
     }
   }
 

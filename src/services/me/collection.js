@@ -1,7 +1,9 @@
-import { AxiosService } from '../axios/service.js'
+import { AxiosServiceHub } from '../axios/hub.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
+import { LoggerTool } from '../../tools/logger-tool.js'
 
 export class MagicEdenCollectionService {
+  #currentServiceName = 'ME Collection'
   constructor(apiUrl) {
     ErrorHelper.throwErrorIfValueIsNotURL(apiUrl)
     this.apiUrl = `${apiUrl}/collections`
@@ -9,45 +11,136 @@ export class MagicEdenCollectionService {
 
   /**
    * @description Fetch NFT collection information by collection symbol
-   * @param {String} symbol - Collection symbol (String)
+   * @param {String} nftCollectionSymbol - Collection symbol (String)
    * @returns
    */
-  async getCollectionInfoByCollectionSymbol(symbol) {
+  async getCollectionInfoByCollectionSymbol(
+    nftCollectionSymbol,
+    log_opts = { logFetchedCollectionInfo: false }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
-      symbol,
-      `NFT Collection Symbol`
+      nftCollectionSymbol,
+      'NFT Collection Symbol'
     )
-    const collectionSymbol = await AxiosService.sendGet(
-      `${this.apiUrl}/${symbol}`,
-      {}
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[READY] Get collection info by collection symbol',
+      nftCollectionSymbol
     )
-    return collectionSymbol.data
+
+    let fetchedCollectionInfo = null
+    try {
+      fetchedCollectionInfo = await AxiosServiceHub.sendGet(
+        `${this.apiUrl}/${nftCollectionSymbol}`,
+        {}
+      )
+    } catch (e) {
+      LoggerTool.error(
+        this.#currentServiceName,
+        '[ERROR] Error to get collection info by collection symbol',
+        nftCollectionSymbol,
+        e.message
+      )
+      throw new Error(e.message)
+    }
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[SUCCESS] Get collection info by collection symbol',
+      nftCollectionSymbol,
+      log_opts.logFetchedCollectionInfo ? fetchedCollectionInfo.data : null
+    )
+
+    return fetchedCollectionInfo.data
   }
 
   /**
    * @description Fetch NFT collection activities by collection symbol
-   * @param {String} symbol - Collection symbol (String)
+   * @param {String} nftCollectionSymbol - Collection symbol (String)
    * @param {String} params - Object like instance {offset: 0, limit: 100}
-   * @returns
+   * @returns - In case of not found, returns an empty array
    */
-  getActivities(symbol, params = { offset: 0, limit: 100 }) {
+  async getCollectionActivitiesByCollectionSymbol(
+    nftCollectionSymbol,
+    args = { offset: 0, limit: 100, logFetchedCollectionActivities: false }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
-      symbol,
-      `Symbol:${this.getActivities.name}`
+      nftCollectionSymbol,
+      'Collection Symbol'
     )
-    return AxiosService.sendGet(`${this.apiUrl}/${symbol}/activities`, params)
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Limit')
+    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[READY] Get collection activities by collection symbol',
+      nftCollectionSymbol
+    )
+
+    let fetchedCollectionActivities = await AxiosServiceHub.sendGet(
+      `${this.apiUrl}/${nftCollectionSymbol}/activities`,
+      args
+    )
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[SUCCESS] Get collection activities by collection symbol',
+      nftCollectionSymbol,
+      args.logFetchedCollectionActivities
+        ? fetchedCollectionActivities.data
+        : null
+    )
+
+    return fetchedCollectionActivities.data
   }
 
   /**
    * @description Fetch NFT collection statistics by collection symbol
-   * @param {String} symbol - Collection symbol (String)
+   * @param {String} nftCollectionSymbol - Collection symbol (String)
    * @returns
    */
-  getStats(symbol) {
+  async getCollectionStatsByCollectionSymbol(
+    nftCollectionSymbol,
+    log_opts = {
+      logFetchedStats: false,
+    }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
-      symbol,
-      `Symbol:${this.getStats.name}`
+      nftCollectionSymbol,
+      'Collection Symbol'
     )
-    return AxiosService.sendGet(`${this.apiUrl}/${symbol}/stats`)
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[READY] Get collection stats by collection symbol',
+      nftCollectionSymbol
+    )
+
+    let fetchedCollectionStats = null
+    try {
+      fetchedCollectionStats = await AxiosServiceHub.sendGet(
+        `${this.apiUrl}/${nftCollectionSymbol}/stats`
+      )
+    } catch (e) {
+      LoggerTool.error(
+        this.#currentServiceName,
+        '[ERROR] Error to get collection stats by collection symbol',
+        nftCollectionSymbol,
+        e.message
+      )
+      throw new Error(e.message)
+    }
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[SUCCESS] Get collection activities by collection symbol',
+      nftCollectionSymbol,
+      log_opts.logFetchedStats ? fetchedCollectionStats.data : null
+    )
+
+    return fetchedCollectionStats.data
   }
 }

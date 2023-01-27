@@ -1,106 +1,330 @@
 import { AxiosService } from '../axios/service.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
+import { LoggerTool } from '../../tools/logger-tool.js'
 
 export class MagicEdenWalletService {
+  #currentServiceName = 'ME Wallet'
   constructor(apiUrl) {
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl)
     this.apiUrl = apiUrl
   }
 
   /**
    * @description Fetch ME wallet listed NFTs by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} params - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100}
    * @returns
    */
-  async getListedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getListedNFTsByWalletAddress(
+    walletAddress,
+    args = { offset: 0, limit: 100, logFetchedListedNFTs: false }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
-      `Wallet Address:${this.getListedNFTs.name}`
+      'Wallet Address for listed NFTs'
     )
-    if (!walletAddress) {
-      throw new Error(
-        `Wallet Address value cannot be null/empty/undefined. Provided: ${walletAddress}`
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Limit')
+    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[READY] Get listed nfts for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      }
+    )
+
+    let fetchedListedNFTs = null
+    try {
+      fetchedListedNFTs = await this.#getNFTs(walletAddress, {
+        offset: args.offset,
+        limit: args.limit,
+        listStatus: 'listed',
+      })
+    } catch (e) {
+      LoggerTool.error(
+        this.#currentServiceName,
+        '[ERROR] Error to get listed nfts for provided wallet address',
+        walletAddress,
+        {
+          offset: args.offset,
+          limit: args.limit,
+        },
+        e.message
       )
+      throw new Error(e.message)
     }
-    return await this.#getNFTs(walletAddress, {
-      offset: params.offset,
-      limit: params.limit,
-      listStatus: 'listed',
-    })
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[SUCCESS] Get listed nfts for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      },
+      args.logFetchedListedNFTs ? fetchedListedNFTs.data : null
+    )
+
+    return fetchedListedNFTs.data
   }
 
   /**
    * @description Fetch ME wallet unlisted NFTs by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} params - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100}
    * @returns {Array<any>}
    */
-  async getUnlistedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getUnlistedNFTsByWalletAddress(
+    walletAddress,
+    args = { offset: 0, limit: 100, logFetchedListedNFTs: false }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
-      `Wallet Address:${this.getUnlistedNFTs.name}`
+      'Wallet Address for listed NFTs'
     )
-    const unlistedNfts = await this.#getNFTs(walletAddress, {
-      offset: params.offset,
-      limit: params.limit,
-      listStatus: 'unlisted',
-    })
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Limit')
+    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    return unlistedNfts.data
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[READY] Get unlisted nfts for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      }
+    )
+
+    let fetchedUnlistedNFTs = null
+    try {
+      fetchedUnlistedNFTs = await this.#getNFTs(walletAddress, {
+        offset: args.offset,
+        limit: args.limit,
+        listStatus: 'unlisted',
+      })
+    } catch (e) {
+      LoggerTool.error(
+        this.#currentServiceName,
+        '[ERROR] Error to get unlisted nfts for provided wallet address',
+        walletAddress,
+        {
+          offset: args.offset,
+          limit: args.limit,
+        },
+        e.message
+      )
+      throw new Error(e.message)
+    }
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[SUCCESS] Get unlisted nfts for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      },
+      args.logFetchedUnlistedNFTs ? fetchedUnlistedNFTs.data : null
+    )
+
+    return fetchedUnlistedNFTs.data
   }
 
   /**
    * @description Fetch ME wallet listed & unlisted NFTs by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} params - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100}
    * @returns
    */
-  async getListedAndUnlistedNFTs(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getListedAndUnlistedNFTsByWalletAddress(
+    walletAddress,
+    args = { offset: 0, limit: 100, logFetchedNFTs: false }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
-      `Wallet Address:${this.getListedAndUnlistedNFTs.name}`
+      'Wallet Address for listed NFTs'
     )
-    return await this.#getNFTs(walletAddress, {
-      offset: params.offset,
-      limit: params.limit,
-      listStatus: 'both',
-    })
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Limit')
+    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[READY] Get unlisted & listed nfts for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      }
+    )
+
+    let fetchedListedAndUnlistedNFTs = null
+    try {
+      fetchedListedAndUnlistedNFTs = await this.#getNFTs(walletAddress, {
+        offset: args.offset,
+        limit: args.limit,
+        listStatus: 'both',
+      })
+    } catch (e) {
+      LoggerTool.error(
+        this.#currentServiceName,
+        '[ERROR] Error to get unlisted & listed nfts for provided wallet address',
+        walletAddress,
+        {
+          offset: args.offset,
+          limit: args.limit,
+        },
+        e.message
+      )
+      throw new Error(e.message)
+    }
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[SUCCESS] Get unlisted & listed nfts for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      },
+      args.logFetchedNFTs ? fetchedListedAndUnlistedNFTs.data : null
+    )
+
+    return fetchedListedAndUnlistedNFTs.data
   }
 
   /**
    * @description Fetch ME wallet offers that are made by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} params - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100}
    * @returns
    */
-  async getOffersMade(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getOffersMadeByWalletAddress(
+    walletAddress,
+    args = { offset: 0, limit: 100, logFetchedOffersMade: false }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
-      `Wallet Address:${this.getOffersMade.name}`
+      'Wallet Address to get offers made from'
+    )
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Limit')
+    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[READY] Get offers made for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      }
     )
 
-    return await AxiosService.sendGet(
-      `${this.apiUrl}/wallets/${walletAddress}/offers_made`,
-      params
+    let fetchedOffersMade = null
+    try {
+      fetchedOffersMade = await AxiosService.sendGet(
+        `${this.apiUrl}/wallets/${walletAddress}/offers_made`,
+        args
+      )
+    } catch (e) {
+      LoggerTool.error(
+        this.#currentServiceName,
+        '[ERROR] Error to get offers made for provided wallet address',
+        walletAddress,
+        {
+          offset: args.offset,
+          limit: args.limit,
+        },
+        e.message
+      )
+      throw new Error(e.message)
+    }
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[SUCCESS] Get offers made for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      },
+      args.logFetchedOffersMade ? fetchedOffersMade.data : null
     )
+
+    return fetchedOffersMade.data
   }
 
   /**
    * @description Fetch ME wallet offers that are received by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} params - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100}
    * @returns
    */
-  async getOffersReceived(walletAddress, params = { offset: 0, limit: 100 }) {
+  async getOffersReceivedByWalletAddress(
+    walletAddress,
+    args = { offset: 0, limit: 100, logFetchedOffersReceived: false }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
-      `Wallet Address:${this.getOffersReceived.name}`
+      'Wallet Address to get offers received to'
+    )
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Limit')
+    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[READY] Get offers received for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      }
     )
 
-    return await AxiosService.sendGet(
-      `${this.apiUrl}/wallets/${walletAddress}/offers_received`,
-      params
+    let fetchedOffersReceived = null
+    try {
+      fetchedOffersReceived = await AxiosService.sendGet(
+        `${this.apiUrl}/wallets/${walletAddress}/offers_received`,
+        args
+      )
+    } catch (e) {
+      LoggerTool.error(
+        this.#currentServiceName,
+        '[ERROR] Error to get offers received for provided wallet address',
+        walletAddress,
+        {
+          offset: args.offset,
+          limit: args.limit,
+        },
+        e.message
+      )
+      throw new Error(e.message)
+    }
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[SUCCESS] Get offers received for provided wallet address',
+      walletAddress,
+      {
+        offset: args.offset,
+        limit: args.limit,
+      },
+      args.logFetchedOffersReceived ? fetchedOffersReceived.data : null
     )
+
+    return fetchedOffersReceived.data
   }
 
   /**
@@ -108,34 +332,63 @@ export class MagicEdenWalletService {
    * @param {String} walletAddress - Wallet Address (UUID)
    * @returns
    */
-  async getBalance(walletAddress) {
+  async getBalanceForWalletAddress(
+    walletAddress,
+    log_opts = { logFetchedMEWalletBalance: false }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       walletAddress,
-      `Wallet Address:${this.getBalance.name}`
+      'Wallet address to get balance of'
     )
 
-    return await AxiosService.sendGet(
-      `${this.apiUrl}/wallets/${walletAddress}/escrow_balance`
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[READY] Get SOL balance of provided wallet address',
+      walletAddress
     )
+
+    let fetchedWalletBalance = null
+    try {
+      fetchedWalletBalance = await AxiosService.sendGet(
+        `${this.apiUrl}/wallets/${walletAddress}/escrow_balance`
+      )
+    } catch (e) {
+      LoggerTool.error(
+        this.#currentServiceName,
+        '[ERROR] Error to get SOL balance of provided wallet address',
+        walletAddress,
+        e.message
+      )
+      throw new Error(e.message)
+    }
+
+    LoggerTool.silly(
+      this.#currentServiceName,
+      '[SUCCESS] Get offers received for provided wallet address',
+      walletAddress,
+      log_opts.logFetchedMEWalletBalance ? fetchedWalletBalance.data : null
+    )
+
+    return fetchedWalletBalance.data
   }
 
   /**
    * @description (Internal) Fetch wallet unlisted/listed/both NFTs by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} params - Object like instance {offset: 0, limit: 100, listStatus: 'both'} //listStatus maybe be: both/listed/unlisted
+   * @param {Object} args - Object like instance {offset: 0, limit: 100, listStatus: 'both'} //listStatus maybe be: both/listed/unlisted
    * @returns
    */
   async #getNFTs(
     walletAddress,
-    params = { offset: 0, limit: 100, listStatus: null }
+    args = { offset: 0, limit: 100, listStatus: null }
   ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
-      params.listStatus,
+      args.listStatus,
       `list status`
     )
     return await AxiosService.sendGet(
       `${this.apiUrl}/wallets/${walletAddress}/tokens`,
-      params
+      args
     )
   }
 }
