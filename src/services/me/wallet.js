@@ -1,11 +1,12 @@
-import { AxiosService } from '../axios/service.js'
-import { ErrorHelper } from '../../helpers/error-helper.js'
-import { LoggerTool } from '../../tools/logger-tool.js'
+import { ErrorHelper } from '../../helpers/error.js'
+import { Logger } from '../../tools/logger.js'
+import { AxiosServiceHub } from '../axios/hub.js'
 
 export class MagicEdenWalletService {
   #currentServiceName = 'ME Wallet'
   constructor(apiUrl) {
-    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl)
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME Wallet API Url')
+    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME Wallet API Url')
     this.apiUrl = apiUrl
   }
 
@@ -28,7 +29,7 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get listed nfts for provided wallet address',
       walletAddress,
@@ -46,7 +47,7 @@ export class MagicEdenWalletService {
         listStatus: 'listed',
       })
     } catch (e) {
-      LoggerTool.error(
+      Logger.error(
         this.#currentServiceName,
         '[ERROR] Error to get listed nfts for provided wallet address',
         walletAddress,
@@ -59,7 +60,7 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get listed nfts for provided wallet address',
       walletAddress,
@@ -92,7 +93,7 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get unlisted nfts for provided wallet address',
       walletAddress,
@@ -110,7 +111,7 @@ export class MagicEdenWalletService {
         listStatus: 'unlisted',
       })
     } catch (e) {
-      LoggerTool.error(
+      Logger.error(
         this.#currentServiceName,
         '[ERROR] Error to get unlisted nfts for provided wallet address',
         walletAddress,
@@ -123,7 +124,7 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get unlisted nfts for provided wallet address',
       walletAddress,
@@ -156,7 +157,7 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get unlisted & listed nfts for provided wallet address',
       walletAddress,
@@ -174,7 +175,7 @@ export class MagicEdenWalletService {
         listStatus: 'both',
       })
     } catch (e) {
-      LoggerTool.error(
+      Logger.error(
         this.#currentServiceName,
         '[ERROR] Error to get unlisted & listed nfts for provided wallet address',
         walletAddress,
@@ -187,7 +188,7 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get unlisted & listed nfts for provided wallet address',
       walletAddress,
@@ -220,7 +221,7 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get offers made for provided wallet address',
       walletAddress,
@@ -232,12 +233,12 @@ export class MagicEdenWalletService {
 
     let fetchedOffersMade = null
     try {
-      fetchedOffersMade = await AxiosService.sendGet(
+      fetchedOffersMade = await AxiosServiceHub.sendGet(
         `${this.apiUrl}/wallets/${walletAddress}/offers_made`,
         args
       )
     } catch (e) {
-      LoggerTool.error(
+      Logger.error(
         this.#currentServiceName,
         '[ERROR] Error to get offers made for provided wallet address',
         walletAddress,
@@ -250,7 +251,7 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get offers made for provided wallet address',
       walletAddress,
@@ -283,7 +284,7 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get offers received for provided wallet address',
       walletAddress,
@@ -295,12 +296,12 @@ export class MagicEdenWalletService {
 
     let fetchedOffersReceived = null
     try {
-      fetchedOffersReceived = await AxiosService.sendGet(
+      fetchedOffersReceived = await AxiosServiceHub.sendGet(
         `${this.apiUrl}/wallets/${walletAddress}/offers_received`,
         args
       )
     } catch (e) {
-      LoggerTool.error(
+      Logger.error(
         this.#currentServiceName,
         '[ERROR] Error to get offers received for provided wallet address',
         walletAddress,
@@ -313,7 +314,7 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get offers received for provided wallet address',
       walletAddress,
@@ -341,7 +342,7 @@ export class MagicEdenWalletService {
       'Wallet address to get balance of'
     )
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get SOL balance of provided wallet address',
       walletAddress
@@ -349,11 +350,11 @@ export class MagicEdenWalletService {
 
     let fetchedWalletBalance = null
     try {
-      fetchedWalletBalance = await AxiosService.sendGet(
+      fetchedWalletBalance = await AxiosServiceHub.sendGet(
         `${this.apiUrl}/wallets/${walletAddress}/escrow_balance`
       )
     } catch (e) {
-      LoggerTool.error(
+      Logger.error(
         this.#currentServiceName,
         '[ERROR] Error to get SOL balance of provided wallet address',
         walletAddress,
@@ -362,7 +363,7 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get offers received for provided wallet address',
       walletAddress,
@@ -382,11 +383,8 @@ export class MagicEdenWalletService {
     walletAddress,
     args = { offset: 0, limit: 100, listStatus: null }
   ) {
-    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
-      args.listStatus,
-      `list status`
-    )
-    return await AxiosService.sendGet(
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(args.listStatus, `list status`)
+    return await AxiosServiceHub.sendGet(
       `${this.apiUrl}/wallets/${walletAddress}/tokens`,
       args
     )

@@ -1,18 +1,19 @@
 import { AxiosServiceHub } from '../axios/hub.js'
-import { ErrorHelper } from '../../helpers/error-helper.js'
-import { LoggerTool } from '../../tools/logger-tool.js'
+import { ErrorHelper } from '../../helpers/error.js'
+import { Logger } from '../../tools/logger.js'
 
 export class MagicEdenNFTService {
   #currentServiceName = 'ME NFT'
   constructor(apiUrl) {
-    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl)
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME NFT API Url')
+    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME NFT API Url')
     this.apiUrl = `${apiUrl}/tokens`
   }
 
   /**
    * @description Fetch information of a token / NFT
    * @param {String} nftMintAddress - NFT Token address (UUID)
-   * @returns - In case of not found, returns an empty array
+   * @returns {Array<any>} - In case of not found, returns an empty array
    */
   async getNFTInfoByNFTMintAddress(
     nftMintAddress,
@@ -22,21 +23,22 @@ export class MagicEdenNFTService {
   ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       nftMintAddress,
-      `NFT Mint Address`
+      'NFT Mint Address'
     )
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get nft info by nft mint address',
       nftMintAddress
     )
 
+    console.log(this.apiUrl)
     let fetchedNFTInfo = await AxiosServiceHub.sendGet(
       `${this.apiUrl}/${nftMintAddress}`,
       {}
     )
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get nft info by nft mint address',
       nftMintAddress,

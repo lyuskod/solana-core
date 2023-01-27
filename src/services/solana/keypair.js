@@ -1,11 +1,18 @@
 import { Keypair } from '@solana/web3.js'
 import { base58_to_binary, binary_to_base58 } from 'base58-js'
-import { LoggerTool } from '../../tools/logger-tool.js'
+import { ErrorHelper } from '../../helpers/error.js'
+import { Logger } from '../../tools/logger.js'
+import { SolanaValidatorService } from './validator.js'
 
 export class SolanaKeyPairService {
-  #serviceName = 'Keypair'
   #network
+  #currentServiceName = 'Keypair'
   constructor(network) {
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
+      network,
+      'Solana network for keypair service'
+    )
+    SolanaValidatorService.validateNetwork(network)
     this.#network = network
   }
 
@@ -18,15 +25,15 @@ export class SolanaKeyPairService {
       logKeyPair: false,
     }
   ) {
-    LoggerTool.silly(
-      this.#serviceName,
+    Logger.silly(
+      this.#currentServiceName,
       `(${this.#network})[READY] Generate random keypair`
     )
 
     let kp = Keypair.generate()
 
-    LoggerTool.silly(
-      this.#serviceName,
+    Logger.silly(
+      this.#currentServiceName,
       `(${this.#network})[SUCCESS] Generate random keypair`,
       log_opts.logKeyPair ? kp : null
     )
@@ -36,21 +43,25 @@ export class SolanaKeyPairService {
   /**
    * @description Encodes the private/public key string into Uint8Array
    * @param {String} privateKeyString - Private/Public key in String
-   * @returns
+   * @returns {Uint8Array}
    */
   encodeStrPKey(
     privateKeyString,
     opts = { logPrivateKey: false, logEncodedUInt8Array: false }
   ) {
-    LoggerTool.silly(
-      this.#serviceName,
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
+      privateKeyString,
+      'Private key'
+    )
+    Logger.silly(
+      this.#currentServiceName,
       `(${this.#network})[READY] Encode string private key into Uint8Array`,
       opts.logPrivateKey ? privateKeyString : null
     )
     let array = base58_to_binary(privateKeyString)
 
-    LoggerTool.silly(
-      this.#serviceName,
+    Logger.silly(
+      this.#currentServiceName,
       `(${this.#network})[SUCCESS] Encode string private key into Uint8Array`,
       opts.logEncodedUInt8Array ? array : null
     )
@@ -66,16 +77,20 @@ export class SolanaKeyPairService {
     privateKeyUint8Array,
     opts = { logPrivateKeyUint8Array: false, logDecodedStringPrivateKey: false }
   ) {
-    LoggerTool.silly(
-      this.#serviceName,
+    ErrorHelper.throwErrorIfArrayIsEmptyOrNullOrUndefined(
+      privateKeyUint8Array,
+      'Private key UInt8Array'
+    )
+    Logger.silly(
+      this.#currentServiceName,
       `(${this.#network})[READY] Decode Uint8Array private key into String`,
       opts.logPrivateKeyUint8Array ? privateKeyUint8Array : null
     )
 
     let strPrivateKey = binary_to_base58(privateKeyUint8Array)
 
-    LoggerTool.silly(
-      this.#serviceName,
+    Logger.silly(
+      this.#currentServiceName,
       `(${this.#network})[SUCCESS] Decode Uint8Array private key into String`,
       opts.logPrivateKeyUint8Array ? privateKeyUint8Array : null,
       opts.logDecodedStringPrivateKey ? strPrivateKey : null
@@ -96,14 +111,18 @@ export class SolanaKeyPairService {
       logCreatedKeyPair: false,
     }
   ) {
-    LoggerTool.silly(
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
+      privateKeyString,
+      'Private key'
+    )
+    Logger.silly(
       SolanaKeyPairService.name,
       `(${this.#network})[READY] Create Keypair instance based on private key`,
       opts.logPrivateKey ? privateKeyString : null
     )
     let keyPair = Keypair.fromSecretKey(base58_to_binary(privateKeyString))
 
-    LoggerTool.silly(
+    Logger.silly(
       SolanaKeyPairService.name,
       `(${
         this.#network
