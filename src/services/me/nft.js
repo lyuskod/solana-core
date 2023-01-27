@@ -1,6 +1,6 @@
 import { AxiosServiceHub } from '../axios/hub.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
-import { LoggerTool } from '../../tools/logger-tool.js'
+import { Logger } from '../../tools/logger.js'
 
 export class MagicEdenNFTService {
   #currentServiceName = 'ME NFT'
@@ -12,7 +12,7 @@ export class MagicEdenNFTService {
   /**
    * @description Fetch information of a token / NFT
    * @param {String} nftMintAddress - NFT Token address (UUID)
-   * @returns - In case of not found, returns an empty array
+   * @returns {Array<any>} - In case of not found, returns an empty array
    */
   async getNFTInfoByNFTMintAddress(
     nftMintAddress,
@@ -25,7 +25,7 @@ export class MagicEdenNFTService {
       `NFT Mint Address`
     )
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get nft info by nft mint address',
       nftMintAddress
@@ -36,7 +36,7 @@ export class MagicEdenNFTService {
       {}
     )
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get nft info by nft mint address',
       nftMintAddress,

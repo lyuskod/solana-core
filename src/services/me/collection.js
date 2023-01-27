@@ -1,6 +1,6 @@
 import { AxiosServiceHub } from '../axios/hub.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
-import { LoggerTool } from '../../tools/logger-tool.js'
+import { Logger } from '../../tools/logger.js'
 
 export class MagicEdenCollectionService {
   #currentServiceName = 'ME Collection'
@@ -23,7 +23,7 @@ export class MagicEdenCollectionService {
       'NFT Collection Symbol'
     )
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get collection info by collection symbol',
       nftCollectionSymbol
@@ -36,16 +36,16 @@ export class MagicEdenCollectionService {
         {}
       )
     } catch (e) {
-      LoggerTool.error(
+      Logger.error(
         this.#currentServiceName,
-        '[ERROR] Error to get collection info by collection symbol',
+        `[ERROR] Error to get collection info by collection symbol`,
         nftCollectionSymbol,
         e.message
       )
       throw new Error(e.message)
     }
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get collection info by collection symbol',
       nftCollectionSymbol,
@@ -74,7 +74,7 @@ export class MagicEdenCollectionService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get collection activities by collection symbol',
       nftCollectionSymbol
@@ -85,7 +85,7 @@ export class MagicEdenCollectionService {
       args
     )
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get collection activities by collection symbol',
       nftCollectionSymbol,
@@ -113,7 +113,7 @@ export class MagicEdenCollectionService {
       'Collection Symbol'
     )
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[READY] Get collection stats by collection symbol',
       nftCollectionSymbol
@@ -125,7 +125,7 @@ export class MagicEdenCollectionService {
         `${this.apiUrl}/${nftCollectionSymbol}/stats`
       )
     } catch (e) {
-      LoggerTool.error(
+      Logger.error(
         this.#currentServiceName,
         '[ERROR] Error to get collection stats by collection symbol',
         nftCollectionSymbol,
@@ -134,7 +134,7 @@ export class MagicEdenCollectionService {
       throw new Error(e.message)
     }
 
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       '[SUCCESS] Get collection activities by collection symbol',
       nftCollectionSymbol,

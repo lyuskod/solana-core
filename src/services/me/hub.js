@@ -2,6 +2,7 @@ import { MagicEdenNFTService } from './nft.js'
 import { MagicEdenWalletService } from './wallet.js'
 import { MagicEdenCollectionService } from './collection.js'
 import { ErrorHelper } from '../../helpers/error-helper.js'
+import { Logger } from '../../tools/logger.js'
 
 export class MagicEdenServiceHub {
   #apiUrl
@@ -11,7 +12,7 @@ export class MagicEdenServiceHub {
   #currentServiceName = 'ME Connection'
   constructor(apiUrl) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl)
-    LoggerTool.silly(
+    Logger.silly(
       this.#currentServiceName,
       `=== Initialize network ${apiUrl} ===`,
       '=== initialize ME NFT Service',
