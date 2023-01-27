@@ -15,7 +15,9 @@ export class ErrorHelper {
       valueName ? `${valueName} ` : ''
     }value cannot be null/undefined/empty`
 
-    if (!value) {
+    if (value == false) return
+
+    if (value == null || value == undefined || value == '') {
       Logger.error(ErrorHelper.#currentServiceName, errorMessage)
       throw new Error(errorMessage)
     }
@@ -56,7 +58,7 @@ export class ErrorHelper {
   }
 
   static throwErrorIfValueIsNegative(value, valueName = '') {
-    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(value)
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(value, valueName)
     const errorMessage = `${
       valueName ? `${valueName} ` : ''
     }value cannot be negative`
