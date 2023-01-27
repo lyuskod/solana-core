@@ -1,8 +1,8 @@
 import log from 'npmlog'
 
-export class LoggerTool {
+export class Logger {
   constructor() {
-    if (this instanceof LoggerTool) {
+    if (this instanceof Logger) {
       throw Error('A static class cannot be instantiated.')
     }
   }
@@ -38,30 +38,32 @@ export class LoggerTool {
   }
 
   static silly(prefix, message, ...args) {
-    LoggerTool.#areArgsNull(args)
+    Logger.#areArgsNull(args)
       ? log.silly(prefix, message)
       : log.silly(prefix, message, args)
   }
 
   static info(prefix, message, ...args) {
-    LoggerTool.#areArgsNull(args)
+    Logger.#areArgsNull(args)
       ? log.info(prefix, message)
       : log.info(prefix, message, args)
   }
 
   static warn(prefix, message, ...args) {
-    LoggerTool.#areArgsNull(args)
+    Logger.#areArgsNull(args)
       ? log.warn(prefix, message)
       : log.warn(prefix, message, args)
   }
 
   static error(prefix, message, ...args) {
-    LoggerTool.#areArgsNull(args)
+    Logger.#areArgsNull(args)
       ? log.error(prefix, message)
       : log.error(prefix, message, args)
   }
 
   static #areArgsNull(args) {
-    return args.length == 0 || args[0] == null || args[0] == undefined
+    return (
+      args.length == 0 || args.every((arg) => arg == null || arg == undefined)
+    )
   }
 }
