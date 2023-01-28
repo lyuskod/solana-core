@@ -7,7 +7,7 @@ import { SolanaValidatorService } from './validator.js'
 import { ErrorHelper } from '../../helpers/error.js'
 import { SolanaNFTService } from './nft.js'
 
-export class SolanaConnectionService {
+export class SolanaServiceHub {
   #connection
   #walletService
   #keyPairService
@@ -32,9 +32,9 @@ export class SolanaConnectionService {
     )
     this.#network = network
     this.#connection = new Connection(clusterApiUrl(network))
-    this.#walletService = new SolanaWalletService(this.#connection)
-    this.#keyPairService = new SolanaKeyPairService()
-    this.#transactionService = new SolanaTransactionService(this.#connection)
+    this.#walletService = new SolanaWalletService(this.#connection, network)
+    this.#keyPairService = new SolanaKeyPairService(network)
+    this.#transactionService = new SolanaTransactionService(this.#connection, network)
     this.#nftService = new SolanaNFTService(this.#connection, network)
   }
 

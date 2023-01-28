@@ -7,7 +7,6 @@ import {
 } from '@solana/web3.js'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { Logger } from '../../tools/logger.js'
-import { SolanaWalletService } from './testwallet.js'
 import { base58_to_binary, binary_to_base58 } from 'base58-js'
 import { ACCOUNT_SIZE } from '@solana/spl-token'
 import { getMinimumBalanceForRentExemptAccount } from '@solana/spl-token'

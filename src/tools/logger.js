@@ -1,3 +1,4 @@
+import { format } from 'date-fns'
 import log from 'npmlog'
 
 export class Logger {
@@ -44,6 +45,7 @@ export class Logger {
   }
 
   static info(prefix, message, ...args) {
+    message = `[${format(Date.now(), 'yyyy-MM-dd HH:mm:ss')}] ${message}`
     Logger.#areArgsNull(args)
       ? log.info(prefix, message)
       : log.info(prefix, message, args)

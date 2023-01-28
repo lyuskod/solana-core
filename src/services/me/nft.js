@@ -32,7 +32,6 @@ export class MagicEdenNFTService {
       nftMintAddress
     )
 
-    console.log(this.apiUrl)
     let fetchedNFTInfo = await AxiosServiceHub.sendGet(
       `${this.apiUrl}/${nftMintAddress}`,
       {}
