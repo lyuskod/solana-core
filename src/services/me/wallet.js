@@ -13,7 +13,7 @@ export class MagicEdenWalletService {
   /**
    * @description Fetch ME wallet listed NFTs by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} args - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100, logFetchedListedNFTs: false}
    * @returns
    */
   async getListedNFTsByWalletAddress(
@@ -29,9 +29,9 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Get listed nfts for provided wallet address',
+      'Ready to get listed nfts on ME of provided wallet address',
       walletAddress,
       {
         offset: args.offset,
@@ -49,7 +49,7 @@ export class MagicEdenWalletService {
     } catch (e) {
       Logger.error(
         this.#currentServiceName,
-        '[ERROR] Error to get listed nfts for provided wallet address',
+        'Error to get listed nfts on ME of provided wallet address',
         walletAddress,
         {
           offset: args.offset,
@@ -60,9 +60,9 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      '[SUCCESS] Get listed nfts for provided wallet address',
+      'Success to get listed nfts on ME of provided wallet address',
       walletAddress,
       {
         offset: args.offset,
@@ -77,7 +77,7 @@ export class MagicEdenWalletService {
   /**
    * @description Fetch ME wallet unlisted NFTs by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} args - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100, logFetchedListedNFTs: false}
    * @returns {Array<any>}
    */
   async getUnlistedNFTsByWalletAddress(
@@ -93,9 +93,9 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Get unlisted nfts for provided wallet address',
+      'Ready to get unlisted nfts on ME of provided wallet address',
       walletAddress,
       {
         offset: args.offset,
@@ -113,7 +113,7 @@ export class MagicEdenWalletService {
     } catch (e) {
       Logger.error(
         this.#currentServiceName,
-        '[ERROR] Error to get unlisted nfts for provided wallet address',
+        'Error to get unlisted nfts on ME of provided wallet address',
         walletAddress,
         {
           offset: args.offset,
@@ -124,9 +124,9 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      '[SUCCESS] Get unlisted nfts for provided wallet address',
+      'Success to get unlisted nfts on ME of provided wallet address',
       walletAddress,
       {
         offset: args.offset,
@@ -141,7 +141,7 @@ export class MagicEdenWalletService {
   /**
    * @description Fetch ME wallet listed & unlisted NFTs by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} args - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100, logFetchedNFTs: false}
    * @returns
    */
   async getListedAndUnlistedNFTsByWalletAddress(
@@ -157,9 +157,9 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Get unlisted & listed nfts for provided wallet address',
+      'Ready to get unlisted & listed nfts on ME of provided wallet address',
       walletAddress,
       {
         offset: args.offset,
@@ -177,7 +177,7 @@ export class MagicEdenWalletService {
     } catch (e) {
       Logger.error(
         this.#currentServiceName,
-        '[ERROR] Error to get unlisted & listed nfts for provided wallet address',
+        'Error to get unlisted & listed nfts on ME of provided wallet address',
         walletAddress,
         {
           offset: args.offset,
@@ -188,9 +188,9 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      '[SUCCESS] Get unlisted & listed nfts for provided wallet address',
+      'Success to get unlisted & listed nfts on ME of provided wallet address',
       walletAddress,
       {
         offset: args.offset,
@@ -205,7 +205,7 @@ export class MagicEdenWalletService {
   /**
    * @description Fetch ME wallet offers that are made by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} args - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100, logFetchedOffersMade: false}
    * @returns
    */
   async getOffersMadeByWalletAddress(
@@ -221,9 +221,9 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Get offers made for provided wallet address',
+      'Ready to get offers made by provided wallet address on ME',
       walletAddress,
       {
         offset: args.offset,
@@ -240,7 +240,7 @@ export class MagicEdenWalletService {
     } catch (e) {
       Logger.error(
         this.#currentServiceName,
-        '[ERROR] Error to get offers made for provided wallet address',
+        'Error to get offers made by provided wallet address on ME',
         walletAddress,
         {
           offset: args.offset,
@@ -251,9 +251,9 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      '[SUCCESS] Get offers made for provided wallet address',
+      'Success to get offers made by provided wallet address on ME',
       walletAddress,
       {
         offset: args.offset,
@@ -268,7 +268,7 @@ export class MagicEdenWalletService {
   /**
    * @description Fetch ME wallet offers that are received by params
    * @param {String} walletAddress - Wallet Address (UUID)
-   * @param {Object} args - Object like instance {offset: 0, limit: 100}
+   * @param {Object} args - Object like instance {offset: 0, limit: 100, logFetchedOffersReceived: false}
    * @returns
    */
   async getOffersReceivedByWalletAddress(
@@ -284,9 +284,9 @@ export class MagicEdenWalletService {
     ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
     ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Get offers received for provided wallet address',
+      'Ready to get offers received to provided wallet address on ME',
       walletAddress,
       {
         offset: args.offset,
@@ -303,7 +303,7 @@ export class MagicEdenWalletService {
     } catch (e) {
       Logger.error(
         this.#currentServiceName,
-        '[ERROR] Error to get offers received for provided wallet address',
+        'Error to get offers received to provided wallet address on ME',
         walletAddress,
         {
           offset: args.offset,
@@ -314,9 +314,9 @@ export class MagicEdenWalletService {
       throw new Error(e.message)
     }
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      '[SUCCESS] Get offers received for provided wallet address',
+      'Success to get offers received to provided wallet address on ME',
       walletAddress,
       {
         offset: args.offset,
@@ -331,6 +331,7 @@ export class MagicEdenWalletService {
   /**
    * @description Get ME wallet balance
    * @param {String} walletAddress - Wallet Address (UUID)
+   * @param {String} log_opts - Log fetched wallet balance
    * @returns
    */
   async getBalanceForWalletAddress(
@@ -342,9 +343,9 @@ export class MagicEdenWalletService {
       'Wallet address to get balance of'
     )
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Get SOL balance of provided wallet address',
+      'Ready to get SOL balance of provided wallet address on ME',
       walletAddress
     )
 
@@ -356,16 +357,16 @@ export class MagicEdenWalletService {
     } catch (e) {
       Logger.error(
         this.#currentServiceName,
-        '[ERROR] Error to get SOL balance of provided wallet address',
+        'Error to get SOL balance of provided wallet address on ME',
         walletAddress,
         e.message
       )
       throw new Error(e.message)
     }
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      '[SUCCESS] Get offers received for provided wallet address',
+      'Success to get SOL balance of provided wallet address on ME',
       walletAddress,
       log_opts.logFetchedMEWalletBalance ? fetchedWalletBalance.data : null
     )

@@ -21,7 +21,7 @@ export class SolanaServiceHub {
       'Solana network for connection service'
     )
     SolanaValidatorService.validateNetwork(network)
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
       `=== (${network}) Initialize network ${network} ===`,
       `(${network}) connection service`,
@@ -31,11 +31,17 @@ export class SolanaServiceHub {
       `(${network}) nft service`
     )
     this.#network = network
-    this.#connection = new Connection(clusterApiUrl(network))
-    this.#walletService = new SolanaWalletService(this.#connection, network)
-    this.#keyPairService = new SolanaKeyPairService(network)
-    this.#transactionService = new SolanaTransactionService(this.#connection, network)
-    this.#nftService = new SolanaNFTService(this.#connection, network)
+    this.#connection = new Connection(clusterApiUrl(this.#network))
+    this.#walletService = new SolanaWalletService(
+      this.#connection,
+      this.#network
+    )
+    this.#keyPairService = new SolanaKeyPairService(this.#network)
+    this.#transactionService = new SolanaTransactionService(
+      this.#connection,
+      this.#network
+    )
+    this.#nftService = new SolanaNFTService(this.#connection, this.#network)
   }
 
   /**
@@ -64,7 +70,7 @@ export class SolanaServiceHub {
 
   /**
    * @description Get Solana nft service object
-   * @returns {SolanaTransactionService}
+   * @returns {SolanaNFTService}
    */
   getNFTService() {
     return this.#nftService

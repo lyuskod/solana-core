@@ -40,17 +40,17 @@ export class SolanaNFTService {
       nftMintAddress,
       'NFT mint adress to get data of'
     )
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Get nft data by nft's mint address`,
+      `(${this.#network}) Ready to get nft metadata by nft's mint address`,
       nftMintAddress
     )
     const nft = await this.#metaplex.nfts().findByMint({
       mintAddress: new PublicKey(nftMintAddress),
     })
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      `(${this.#network})[SUCCESS] Get nft by nft's mint address`,
+      `(${this.#network}) Success to get nft metadata by nft's mint address`,
       nftMintAddress,
       log_opts.logNFTMetadata ? nft.json : null
     )

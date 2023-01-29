@@ -5,12 +5,14 @@ import { Logger } from '../../tools/logger.js'
 import { SolanaValidatorService } from './validator.js'
 import { SolanaTestWalletService } from './testwallet.js'
 import { ErrorHelper } from '../../helpers/error.js'
+import { SolanaNFTService } from './nft.js'
 
 export class SolanaTestConnectionService {
   #connection
-  #testAccountService
+  #testWalletService
   #keyPairService
   #transactionService
+  #nftService
   #network
   #currentServiceName = 'Connection'
   constructor(network) {
@@ -19,7 +21,7 @@ export class SolanaTestConnectionService {
       'Solana connection network'
     )
     SolanaValidatorService.validateTestNetwork(network)
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
       `=== (${network}) Initialize network ${network} ===`,
       `(${network}) connection service`,
@@ -29,12 +31,13 @@ export class SolanaTestConnectionService {
     )
     this.#network = network
     this.#connection = new Connection(clusterApiUrl(this.#network))
-    this.#testAccountService = new SolanaTestWalletService(this.#network)
+    this.#testWalletService = new SolanaTestWalletService(this.#network)
     this.#keyPairService = new SolanaKeyPairService(this.#network)
     this.#transactionService = new SolanaTransactionService(
       this.#connection,
       this.#network
     )
+    this.#nftService = new SolanaNFTService(this.#connection, this.#network)
   }
 
   /**
@@ -42,7 +45,7 @@ export class SolanaTestConnectionService {
    * @returns {SolanaTestWalletService}
    */
   getWalletTestService() {
-    return this.#testAccountService
+    return this.#testWalletService
   }
 
   /**
@@ -59,5 +62,13 @@ export class SolanaTestConnectionService {
    */
   getTransactionService() {
     return this.#transactionService
+  }
+
+  /**
+   * @description Get Solana nft service object
+   * @returns {SolanaNFTService}
+   */
+  getNFTService() {
+    return this.#nftService
   }
 }

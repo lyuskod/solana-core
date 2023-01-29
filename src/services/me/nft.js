@@ -37,9 +37,9 @@ export class MagicEdenNFTService {
       {}
     )
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[SUCCESS] Get nft info by nft mint address',
+      'Get nft info by nft mint address',
       nftMintAddress,
       log_opts.logFetchedNFTInfo ? fetchedNFTInfo.data : null
     )

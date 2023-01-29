@@ -20,6 +20,7 @@ export class Logger {
       enableProgress: true,
     }
   ) {
+    this.#addCustomLevels()
     const functions = {
       enabled: () => (log.pause = !opts.enabled),
       level: () => (log.level = opts.level),
@@ -30,12 +31,30 @@ export class Logger {
     Object.keys(opts).forEach((key) => functions[key]())
   }
 
+  static #addCustomLevels() {
+    log.addLevel('ready', 2, { bold: true, inverse: true })
+    log.addLevel('success', 3, { bold: true, inverse: true, fg: 'green' })
+    log.addLevel('fail', 4, { bold: true, inverse: true, fg: 'red' })
+  }
+
   static pause() {
     log.pause()
   }
 
   static unpause() {
     log.resume()
+  }
+
+  static ready(prefix, message, ...args) {
+    Logger.#areArgsNull(args)
+      ? log.ready(prefix, message)
+      : log.ready(prefix, message, args)
+  }
+
+  static success(prefix, message, ...args) {
+    Logger.#areArgsNull(args)
+      ? log.success(prefix, message)
+      : log.success(prefix, message, args)
   }
 
   static silly(prefix, message, ...args) {
@@ -59,8 +78,8 @@ export class Logger {
 
   static error(prefix, message, ...args) {
     Logger.#areArgsNull(args)
-      ? log.error(prefix, message)
-      : log.error(prefix, message, args)
+      ? log.fail(prefix, message)
+      : log.fail(prefix, message, args)
   }
 
   static #areArgsNull(args) {

@@ -50,9 +50,9 @@ export class SolanaWalletService {
     )
     let newWalletKeyPair = Keypair.generate()
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Create random wallet`,
+      `(${this.#network}) Ready to create random wallet`,
       log_opts.logCreatedWalletData
         ? [
             [
@@ -92,9 +92,9 @@ export class SolanaWalletService {
       newWalletKeyPair,
     ])
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      `(${this.#network})[SUCCESS] Create random wallet`,
+      `(${this.#network}) Success to create random wallet`,
       log_opts.logCreatedWalletData
         ? [
             [
@@ -139,9 +139,9 @@ export class SolanaWalletService {
       'Wallet address to get balance of'
     )
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Get wallet balance by public key`,
+      `(${this.#network}) Ready to get wallet balance by wallet address`,
       walletAddress
     )
 
@@ -149,9 +149,9 @@ export class SolanaWalletService {
       (await this.#connection.getBalance(new PublicKey(walletAddress))) /
       LAMPORTS_PER_SOL
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      `(${this.#network})[SUCCESS] Get wallet balance by public key`,
+      `(${this.#network}) Success to get wallet balance by wallet address`,
       walletAddress,
       walletBalance
     )
@@ -168,9 +168,9 @@ export class SolanaWalletService {
       walletAddress,
       'Wallet address to get wallet info of'
     )
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Get wallet info by public key`,
+      `(${this.#network}) Ready to get wallet information by wallet address`,
       walletAddress
     )
 
@@ -178,9 +178,9 @@ export class SolanaWalletService {
       new PublicKey(walletAddress)
     )
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      `(${this.#network})[SUCCESS] Get wallet info by public key`,
+      `(${this.#network}) Success to get wallet information by wallet address`,
       walletAddress,
       opts.logWalletInfo ? walletInfo : null
     )

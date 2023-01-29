@@ -5,7 +5,6 @@ import {
   LAMPORTS_PER_SOL,
   sendAndConfirmTransaction,
   Keypair,
-  Connection,
 } from '@solana/web3.js'
 import { base58_to_binary } from 'base58-js'
 import _ from 'lodash'
@@ -57,11 +56,11 @@ export class SolanaTransactionService {
       'SOL amount to send'
     )
     ErrorHelper.throwErrorIfValueIsNegative(solAmount, 'SOL amount to send')
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
       `(${
         this.#network
-      })[READY] Transfer SOL: '${solAmount}': \n-from '${senderKeyPairSecret.publicKey.toBase58()}'\n-to '${receiverWalletAddress}'\n`
+      }) Ready to transfer SOL: '${solAmount}': \n-from '${senderKeyPairSecret.publicKey.toBase58()}'\n-to '${receiverWalletAddress}'\n`
     )
 
     this.#transaction = new Transaction()
@@ -79,9 +78,9 @@ export class SolanaTransactionService {
       [senderKeyPairSecret]
     )
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      `(${this.#network})[SUCCESS] Transfer SOL: '${
+      `(${this.#network}) Success to transfer SOL: '${
         opts.solAmount
       }': \n-from '${senderWalletAddress}'\n-to '${receiverWalletAddress}'\n`
     )
@@ -120,9 +119,11 @@ export class SolanaTransactionService {
     const addressPublicKey = new PublicKey(address)
     let confirmedTransactions = null
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Get confirmed transactions for address`,
+      `(${
+        this.#network
+      }) Ready to get confirmed transactions of provided address`,
       address
     )
 
@@ -142,18 +143,20 @@ export class SolanaTransactionService {
         throw new Error()
       }
 
-      Logger.silly(
+      Logger.success(
         this.#currentServiceName,
-        `(${this.#network})[SUCCESS] Get confirmed transactions for address`,
+        `(${
+          this.#network
+        }) Success to get confirmed transactions of provided address`,
         address,
         opts.logConfirmedTransactions ? confirmedTransactions : null
       )
     } catch (e) {
-      Logger.silly(
+      Logger.warn(
         this.#currentServiceName,
         `(${
           this.#network
-        })[WARN] Get confirmed transactions returned []. It can be 0 transactions or address is not valid`,
+        }) Get confirmed transactions returned []. It can be 0 transactions or address is not valid`,
         address
       )
       confirmedTransactions = []
@@ -175,33 +178,66 @@ export class SolanaTransactionService {
     return confirmedTransactions.map((transaction) => transaction.signature)
   }
 
-  async getParsedTransactionBySignature(signature) {
+  /**
+   * @description - Get parsed data of transaction by transaction signature
+   * @param {String} signature - Signature hash in String
+   * @param {Object} log_opts - Log parsed transaction data
+   * @returns {JSON}
+   */
+  async getParsedTransactionBySignature(
+    signature,
+    log_opts = { logParsedTransactionData: false }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       signature,
       'Signature to get transaction by'
     )
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Get transaction by signature`,
+      `(${
+        this.#network
+      }) Ready to get parsed data of provided transaction by transaction signature`,
       signature
     )
 
     let transaction = await this.#connection.getParsedTransaction(signature, {
       maxSupportedTransactionVersion: 0,
     })
+
+    Logger.success(
+      this.#currentServiceName,
+      `(${
+        this.#network
+      }) Ready to get parsed data of provided transaction by transaction signature`,
+      signature,
+      log_opts.logParsedTransactionData ? transaction : null
+    )
     return transaction
   }
 
-  async getTheMostRecentTransactionForAddress(address) {
+  /**
+   * @description - Get the most recent transaction for address
+   * @param {String} address - Wallet/account address in String
+   * @param {Object} log_opts - Log the most recent transaction data
+   * @returns {JSON}
+   */
+  async getTheMostRecentTransactionForAddress(
+    address,
+    log_opts = {
+      logTheMostRecentTransactionData: false,
+    }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       address,
       'Address to get the most recent transaction of'
     )
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Get the most resent transaction of address`,
+      `(${
+        this.#network
+      }) Ready to get the most resent transaction data of provided address`,
       address
     )
 
@@ -209,39 +245,50 @@ export class SolanaTransactionService {
     let transactions = await this.#connection.getConfirmedSignaturesForAddress2(
       addressPublicKeyKey,
       {
-        limit: 3,
-      },
-      'finalized'
+        limit: 1,
+      }
     )
 
-    console.log(transactions)
-    if (!transactions.length) {
-      Logger.silly(
+    if (!transactions.length || !transactions.err == null) {
+      Logger.warn(
         this.#currentServiceName,
         `(${
           this.#network
-        })[WARN] Get the most resent transaction method was not found recent transaction by address. Retrying...`,
+        }) The most recent transaction is not found or received a transaction that are not completed on blockchain due some error. Retrying...`,
         address
       )
       await timer(500)
       this.getTheMostRecentTransactionForAddress(address)
     }
 
-    let filtered = transactions.filter((transaction) => transaction.err == null)
-
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      `(${this.#network})[SUCCESS] Get the most resent transaction of address`,
+      `(${
+        this.#network
+      }) Success to get the most resent transaction data of provided address`,
       {
         address: address,
         signature: transactions[0].signature,
-      }
+      },
+      log_opts.logTheMostRecentTransactionData ? transactions[0] : null
     )
 
-    return transactions[transactions.length - 1]
+    return transactions[0]
   }
 
-  async getTransactionsGoingAfterTransaction(address, afterSignature) {
+  /**
+   * @description Get transactions that are new (appeared) after provided transaction
+   * @param {String} address - Wallet address
+   * @param {String} afterSignature - Transaction hash in String
+   * @returns {Array<JSON>}
+   */
+  async getTransactionsGoingAfterTransaction(
+    address,
+    afterSignature,
+    log_opts = {
+      logNewTransactions: false,
+    }
+  ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       address,
       'Address to get transactions that goes after corresponding one'
@@ -252,9 +299,11 @@ export class SolanaTransactionService {
       'Signature to get transactions that goes after one'
     )
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Get transactions going after provided one`,
+      `(${
+        this.#network
+      }) Ready to get new transactions appeared after provided one`,
       {
         address,
         afterSignature,
@@ -273,14 +322,17 @@ export class SolanaTransactionService {
 
     transactions = transactions.filter((transaction) => transaction.err == null)
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      `(${this.#network}) Get transactions going after provided one`,
+      `(${
+        this.#network
+      }) Success to get new transactions appeared after provided one`,
       {
         address,
         afterSignature,
         transactionsCount: transactions.length,
-      }
+      },
+      log_opts.logNewTransactions ? transactions : null
     )
 
     return transactions

@@ -5,14 +5,21 @@ import { Logger } from '../../tools/logger.js'
 export class MagicEdenCollectionService {
   #currentServiceName = 'ME Collection'
   constructor(apiUrl) {
-    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME Collection API Url')
-    ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME Collection API Url')
+    ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
+      apiUrl,
+      'ME Collection Serice: API Url'
+    )
+    ErrorHelper.throwErrorIfValueIsNotURL(
+      apiUrl,
+      'ME Collection Serice: API Url'
+    )
     this.apiUrl = `${apiUrl}/collections`
   }
 
   /**
    * @description Fetch NFT collection information by collection symbol
    * @param {String} nftCollectionSymbol - Collection symbol (String)
+   * @param {String} log_opts - Log fetched collection info
    * @returns
    */
   async getCollectionInfoByCollectionSymbol(
@@ -21,12 +28,12 @@ export class MagicEdenCollectionService {
   ) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       nftCollectionSymbol,
-      'NFT Collection Symbol'
+      'Collection Symbol'
     )
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Get collection info by collection symbol',
+      'Ready to get ME collection info by collection symbol',
       nftCollectionSymbol
     )
 
@@ -37,18 +44,20 @@ export class MagicEdenCollectionService {
         {}
       )
     } catch (e) {
+      const errorMessage =
+        'Error to get ME collection info by collection symbol'
       Logger.error(
         this.#currentServiceName,
-        `[ERROR] Error to get collection info by collection symbol`,
+        errorMessage,
         nftCollectionSymbol,
         e.message
       )
-      throw new Error(`Get Collection info by collection symbol ${e.message}`)
+      throw new Error(`${errorMessage}\n${e.message}`)
     }
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      '[SUCCESS] Get collection info by collection symbol',
+      'Success to get ME collection info by collection symbol',
       nftCollectionSymbol,
       log_opts.logFetchedCollectionInfo ? fetchedCollectionInfo.data : null
     )
@@ -59,7 +68,7 @@ export class MagicEdenCollectionService {
   /**
    * @description Fetch NFT collection activities by collection symbol
    * @param {String} nftCollectionSymbol - Collection symbol (String)
-   * @param {String} params - Object like instance {offset: 0, limit: 100}
+   * @param {String} params - Object like instance {offset: 0, limit: 100, logFetchedCollectionActivities: false}
    * @returns - In case of not found, returns an empty array
    */
   async getCollectionActivitiesByCollectionSymbol(
@@ -70,14 +79,14 @@ export class MagicEdenCollectionService {
       nftCollectionSymbol,
       'Collection Symbol'
     )
-    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Get collection activities: Offset')
-    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Get collection activities: Limit')
-    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Get collection activities: Offset')
-    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Get collection activities: Limit')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsUndefinedOrNull(args.limit, 'Limit')
+    ErrorHelper.throwErrorIfValueIsNegative(args.offset, 'Offset')
+    ErrorHelper.throwErrorIfValueIsNegative(args.limit, 'Limit')
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Get collection activities by collection symbol',
+      'Ready to get ME collection activities by collection symbol',
       nftCollectionSymbol
     )
 
@@ -86,9 +95,9 @@ export class MagicEdenCollectionService {
       args
     )
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      '[SUCCESS] Get collection activities by collection symbol',
+      'Success to get ME collection activities by collection symbol',
       nftCollectionSymbol,
       args.logFetchedCollectionActivities
         ? fetchedCollectionActivities.data
@@ -101,6 +110,7 @@ export class MagicEdenCollectionService {
   /**
    * @description Fetch NFT collection statistics by collection symbol
    * @param {String} nftCollectionSymbol - Collection symbol (String)
+   * @param {Object} log_opts - Log fetched statistics
    * @returns
    */
   async getCollectionStatsByCollectionSymbol(
@@ -114,9 +124,9 @@ export class MagicEdenCollectionService {
       'Collection Symbol'
     )
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Get collection stats by collection symbol',
+      'Ready to get ME collection statistics by collection symbol',
       nftCollectionSymbol
     )
 
@@ -128,16 +138,16 @@ export class MagicEdenCollectionService {
     } catch (e) {
       Logger.error(
         this.#currentServiceName,
-        '[ERROR] Error to get collection stats by collection symbol',
+        'Error to get ME collection statistics by collection symbol',
         nftCollectionSymbol,
         e.message
       )
       throw new Error(e.message)
     }
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      '[SUCCESS] Get collection activities by collection symbol',
+      'Success to get ME collection statistics by collection symbol',
       nftCollectionSymbol,
       log_opts.logFetchedStats ? fetchedCollectionStats.data : null
     )

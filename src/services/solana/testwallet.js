@@ -26,7 +26,7 @@ export class SolanaTestWalletService {
   /**
    * @description Create test wallet with SOL airdrop receiving
    * @param {String} walletSolBalance - Wallet address to receive SOL onto
-   * @param {Object} log_opts  - Log private key after creating account
+   * @param {Object} log_opts  - Log public key & private key after creating account
    * @returns
    */
   async createTestWalletWithAirdrop(
@@ -44,11 +44,11 @@ export class SolanaTestWalletService {
       walletSolBalance,
       'Test wallet SOL balance to receive after creation'
     )
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
       `(${
         this.#network
-      })[READY] Create test wallet with ${walletSolBalance} SOL airdrop`,
+      }) Ready to create test wallet with ${walletSolBalance} SOL airdrop`,
       log_opts.logPublicKey ? publicKey : null,
       log_opts.logPrivateKey ? secretKey : null
     )
@@ -59,9 +59,9 @@ export class SolanaTestWalletService {
     const secretKey = binary_to_base58(kp.secretKey)
 
     if (Object.values(log_opts).find((value) => value)) {
-      Logger.silly(
+      Logger.success(
         this.#currentServiceName,
-        `(${this.#network})[SUCCESS] Created wallet data`,
+        `(${this.#network}) Success to create test wallet`,
         log_opts.logPublicKey ? publicKey : null,
         log_opts.logPrivateKey ? secretKey : null
       )
@@ -74,9 +74,11 @@ export class SolanaTestWalletService {
       )
     )
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      `(${this.#network})[SUCCESS] Received airdrop: ${walletSolBalance} SOL`,
+      `(${
+        this.#network
+      }) Success to receive airdrop for test wallet: ${walletSolBalance} SOL`,
       log_opts.logPublicKey ? publicKey.toBase58 : null
     )
 
@@ -87,6 +89,7 @@ export class SolanaTestWalletService {
    * @description Receive SOL airdrop onto wallet
    * @param {String} walletAddress - Wallet address to receive SOL airdrop onto
    * @param {Number} solAmount  - SOL amount
+   * @param {Object} opts - Timeout in mills between airdropping if solAmount > 1
    * @returns
    */
   async receiveSOLAirdrop(
@@ -103,9 +106,9 @@ export class SolanaTestWalletService {
       'SOL Amount for airdrop'
     )
     ErrorHelper.throwErrorIfValueIsNegative(solAmount, 'SOL Amount for airdrop')
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Requesting airdrop`,
+      `(${this.#network}) Ready to request SOL airdrop`,
       walletAddress,
       solAmount
     )
@@ -124,9 +127,9 @@ export class SolanaTestWalletService {
       }
     }
 
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
-      `(${this.#network})[SUCCESS] Requesting airdrop`,
+      `(${this.#network}) Success to receive SOL airdrop`,
       walletAddress,
       solAmount
     )
@@ -135,6 +138,7 @@ export class SolanaTestWalletService {
   /**
    * @description Fetch wallet SOL balance
    * @param {String} walletAddress - Wallet public key in String
+   * @param {Object} opts - Log balance
    * @returns
    */
   async getWalletBalance(walletAddress, opts = { logBalance: false }) {
@@ -142,9 +146,9 @@ export class SolanaTestWalletService {
       walletAddress,
       'Wallet address to get wallet balance of'
     )
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      `(${this.#network})[READY] Get balance for wallet address`,
+      `(${this.#network}) Ready to get balance for wallet address`,
       walletAddress
     )
 
@@ -152,14 +156,12 @@ export class SolanaTestWalletService {
       (await this.#connection.getBalance(new PublicKey(walletAddress))) /
       LAMPORTS_PER_SOL
 
-    if (opts.logBalance) {
-      Logger.silly(
-        this.#currentServiceName,
-        `(${this.#network})[READY] Get balance for wallet address`,
-        walletAddress,
-        balance
-      )
-    }
+    Logger.success(
+      this.#currentServiceName,
+      `(${this.#network}) Success to get balance for wallet address`,
+      walletAddress,
+      opts.logBalance ? balance : null
+    )
     return balance
   }
 }

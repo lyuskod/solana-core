@@ -26,29 +26,39 @@ export class AxiosServiceHub {
       url = `${url}?${this.#formatGetParamsIntoString(params)}`
     }
 
-    Logger.silly(
+    Logger.ready(
       this.#currentServiceName,
-      '[READY] Send GET Axios request',
+      'Ready to send GET Axios request',
       url,
       Object.keys(params).length ? params : null
     )
 
-    return await axios({
+    let response = await axios({
       method: 'get',
       url,
     })
+
+    Logger.success(
+      this.#currentServiceName,
+      'Success to send GET Axios request',
+      url,
+      Object.keys(params).length ? params : null
+    )
+
+    return response
   }
 
   /**
-   * @description (Internal) Format params from object-like instance into String format (e.g. 'name=Tome&age=19')
-   * @param {Object} params Params in object-like instance (e.g. {name: 'Tom'})
-   * @returns {Array<String>}
+   * @description - (Internal) Format params from object-like instance into String format (e.g. 'name=Tome&age=19')
+   * @param {Object} - params Params in object-like instance (e.g. {name: 'Tom'})
+   * @returns {String} - Returns params transformed into &name=Tom String
    */
   static #formatGetParamsIntoString(params) {
+    const errorMessage =
+      'Params should be an object with KV-pairs: { name: value }'
     if (!(params instanceof Object)) {
-      throw new Error(
-        'Params should be an object with KV-pairs: { name: value }'
-      )
+      Logger.error(ErrorHelper.name, errorMessage)
+      throw new Error(errorMessage)
     }
 
     let keys = Object.keys(params)

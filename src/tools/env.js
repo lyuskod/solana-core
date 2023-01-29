@@ -19,18 +19,50 @@ export class Environment {
    * @returns {String}
    */
   static getEnvValueByKey(key) {
+    Logger.ready(
+      this.#currentServiceName,
+      'Ready to get env variable value by key',
+      key
+    )
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       key,
       'Environment key to get value for'
     )
-    return process.env[key]
+    let value = process.env[key]
+
+    Logger.success(
+      this.#currentServiceName,
+      'Success to get env variable value by key',
+      `${key}=${value}`
+    )
+    return value
   }
 
   static envKeyInitialized(key) {
+    Logger.ready(
+      this.#currentServiceName,
+      'Ready to verify if env variable is initialized',
+      key
+    )
+
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       key,
       'Environment key to check if initialized'
     )
-    return !!process.env[key]
+    const isInitialized = !!process.env[key]
+
+    isInitialized
+      ? Logger.warn(
+          this.#currentServiceName,
+          'Environment variable is not initalized',
+          key
+        )
+      : Logger.success(
+          this.#currentServiceName,
+          'Environment variable is initialized',
+          key
+        )
+
+    return isInitialized
   }
 }

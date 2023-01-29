@@ -13,7 +13,7 @@ export class MagicEdenServiceHub {
   constructor(apiUrl) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME Hub API Url')
     ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME Hub API Url')
-    Logger.silly(
+    Logger.success(
       this.#currentServiceName,
       `=== Initialize network ${apiUrl} ===`,
       '=== initialize ME NFT Service',
