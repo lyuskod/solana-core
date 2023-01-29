@@ -16,7 +16,7 @@ import { SolanaValidatorService } from './validator.js'
 export class SolanaWalletService {
   #connection
   #network
-  #currentServiceName = 'Wallet'
+  #currentServiceName = 'Solana Wallet Service'
   constructor(connection, network) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       connection,

@@ -1,7 +1,7 @@
 import { Logger } from '../tools/logger.js'
 
 export class ErrorHelper {
-  static #currentServiceName = 'Error'
+  static #currentServiceName = 'Error Checker'
   constructor() {
     if (this instanceof ErrorHelper) {
       const errorMessage = `${ErrorHelper.name} static class cannot be instantiated.`

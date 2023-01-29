@@ -9,7 +9,7 @@ export class MagicEdenServiceHub {
   #nftServiceInstance
   #walletServiceInstance
   #collectionServiceInstance
-  #currentServiceName = 'ME Connection'
+  #currentServiceName = 'ME Connection Service'
   constructor(apiUrl) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME Hub API Url')
     ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME Hub API Url')

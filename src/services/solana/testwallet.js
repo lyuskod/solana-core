@@ -14,7 +14,7 @@ import { ErrorHelper } from '../../helpers/error.js'
 export class SolanaTestWalletService {
   #connection
   #transaction
-  #currentServiceName = 'Test Wallet'
+  #currentServiceName = 'Solana Wallet Service'
   #network
   constructor(network) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(network, 'Solana test network')

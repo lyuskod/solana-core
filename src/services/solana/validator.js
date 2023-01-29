@@ -4,7 +4,7 @@ export class SolanaValidatorService {
   static #testNetworks = ['devnet', 'testnet']
   static #prodNetworks = ['mainnet-beta']
   static #validNetworks = ['devnet', 'testnet', 'mainnet-beta']
-  static #currentServiceName = 'Validator'
+  static #currentServiceName = 'Solana Validator Service'
   constructor() {
     if (this instanceof SolanaValidatorService) {
       const errorMessage = `${SolanaValidatorService.name} static class cannot be instantiated.`

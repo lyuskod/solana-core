@@ -8,7 +8,7 @@ export class SolanaNFTService {
   #connection
   #network
   #metaplex
-  #currentServiceName = 'NFT'
+  #currentServiceName = 'Solana NFT Service'
   constructor(connection, network) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       connection,

@@ -17,7 +17,7 @@ export class SolanaTransactionService {
   #connection
   #transaction
   #network
-  #currentServiceName = 'Transaction'
+  #currentServiceName = 'Solana Transaction Service'
   constructor(connection, network) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       connection,

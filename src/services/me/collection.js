@@ -3,7 +3,7 @@ import { ErrorHelper } from '../../helpers/error.js'
 import { Logger } from '../../tools/logger.js'
 
 export class MagicEdenCollectionService {
-  #currentServiceName = 'ME Collection'
+  #currentServiceName = 'ME Collection Service'
   constructor(apiUrl) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       apiUrl,

@@ -3,7 +3,7 @@ import { ErrorHelper } from '../../helpers/error.js'
 import { Logger } from '../../tools/logger.js'
 
 export class AxiosServiceHub {
-  static #currentServiceName = 'Axios'
+  static #currentServiceName = 'Axios Service'
   constructor() {
     if (this instanceof AxiosServiceHub) {
       const errorMessage = `${AxiosServiceHub.name} static class cannot be instantiated.`

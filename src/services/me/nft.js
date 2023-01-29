@@ -3,7 +3,7 @@ import { ErrorHelper } from '../../helpers/error.js'
 import { Logger } from '../../tools/logger.js'
 
 export class MagicEdenNFTService {
-  #currentServiceName = 'ME NFT'
+  #currentServiceName = 'ME NFT Service'
   constructor(apiUrl) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME NFT API Url')
     ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME NFT API Url')

@@ -6,7 +6,7 @@ import { SolanaValidatorService } from './validator.js'
 
 export class SolanaKeyPairService {
   #network
-  #currentServiceName = 'Keypair'
+  #currentServiceName = 'Solana Keypair Service'
   constructor(network) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       network,

@@ -3,7 +3,7 @@ import { Logger } from '../../tools/logger.js'
 import { AxiosServiceHub } from '../axios/hub.js'
 
 export class MagicEdenWalletService {
-  #currentServiceName = 'ME Wallet'
+  #currentServiceName = 'ME Wallet Service'
   constructor(apiUrl) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(apiUrl, 'ME Wallet API Url')
     ErrorHelper.throwErrorIfValueIsNotURL(apiUrl, 'ME Wallet API Url')

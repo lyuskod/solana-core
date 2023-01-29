@@ -4,7 +4,7 @@ import { Logger } from './logger.js'
 dotenv.config()
 
 export class Environment {
-  static #currentServiceName = 'Environment'
+  static #currentServiceName = 'Environment Service'
   constructor() {
     if (this instanceof Environment) {
       const errorMessage = `${Environment.name} static class cannot be instantiated.`

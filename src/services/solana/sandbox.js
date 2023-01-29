@@ -14,7 +14,7 @@ export class SolanaTestConnectionService {
   #transactionService
   #nftService
   #network
-  #currentServiceName = 'Connection'
+  #currentServiceName = 'Solana Connection Service (Test network)'
   constructor(network) {
     ErrorHelper.throwErrorIfUndefinedNullOrEmpty(
       network,
