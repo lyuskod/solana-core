@@ -6,7 +6,8 @@
   "scripts": {
     "commit": "yarn cz",
     "rmw": "if exist node_modules rmdir /Q /S node_modules",
-    "test": "yarn jest"
+    "test": "yarn jest",
+    "metaboss:install": "curl -sSf https://raw.githubusercontent.com/samuelvanderwaal/metaboss/main/scripts/install.sh"
   },
   "repository": {
     "type": "git",

@@ -12,15 +12,15 @@ export class Parser {
     }
   }
 
-  static async parseTransactionNFTData(transaction, marketplaces, solanaHub) {
+  static async parseParsedTransactionNFTData(
+    parsedTransaction,
+    marketplaces,
+    solanaHub
+  ) {
     ErrorHelper.throwErrorIfArrayIsEmptyOrNullOrUndefined(
-      transaction,
+      parsedTransaction,
       'Transaction to parse NFT data from'
     )
-
-    const parsedTransaction = await solanaHub
-      .getTransactionService()
-      .getParsedTransactionBySignature(transaction.signature)
 
     let accounts = parsedTransaction.transaction.message.accountKeys
     let marketplaceAccount = accounts[accounts.length - 1].pubkey.toString()
@@ -40,11 +40,11 @@ export class Parser {
       .getNFTDataByMintAddress(nftAddress)
     return {
       links: {
-        solanaFM: `https://solana.fm/tx/${transaction.signature}`,
-        solscan: `https://solscan.io/tx/${transaction.signature}`,
+        solanaFM: `https://solana.fm/tx/${parsedTransaction.signatures[0]}`,
+        solscan: `https://solscan.io/tx/${parsedTransaction.signatures[0]}`,
       },
       transaction: {
-        id: transaction.signature,
+        id: parsedTransaction.signatures[0],
         date: new Date(transaction.blockTime * 1000).toLocaleString(),
         price:
           Math.abs(

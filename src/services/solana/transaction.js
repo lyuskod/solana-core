@@ -5,6 +5,8 @@ import {
   LAMPORTS_PER_SOL,
   sendAndConfirmTransaction,
   Keypair,
+  Connection,
+  clusterApiUrl,
 } from '@solana/web3.js'
 import { base58_to_binary } from 'base58-js'
 import _ from 'lodash'
@@ -12,6 +14,8 @@ import { timer } from '../../../bot/helpers/manager.js'
 import { ErrorHelper } from '../../helpers/error.js'
 import { Logger } from '../../tools/logger.js'
 import { SolanaValidatorService } from './validator.js'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
 
 export class SolanaTransactionService {
   #connection
@@ -305,15 +309,14 @@ export class SolanaTransactionService {
         this.#network
       }) Ready to get new transactions appeared after provided one`,
       {
-        address,
         afterSignature,
       }
     )
 
     let transactions = []
-    const addressPublicKeyKey = new PublicKey(address)
+    
     transactions = await this.#connection.getConfirmedSignaturesForAddress2(
-      addressPublicKeyKey,
+      new PublicKey('ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'),
       {
         until: afterSignature,
       }
@@ -336,5 +339,11 @@ export class SolanaTransactionService {
     )
 
     return transactions
+  }
+
+  async getTransactionBySignature(signature) {
+    return await new Connection(clusterApiUrl('mainnet-beta')).getTransaction(
+      signature
+    )
   }
 }

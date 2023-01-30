@@ -2,6 +2,7 @@ import { Logger } from '../../src/tools/logger.js'
 import { Environment } from '../../src/tools/env.js'
 import { SolanaServiceHub } from '../../src/services/solana/hub.js'
 import _ from 'lodash'
+import { Connection } from '@solana/web3.js/lib/index.cjs.js'
 
 export const timer = (ms) => new Promise((res) => setTimeout(res, ms))
 export class RunManager {
@@ -52,83 +53,31 @@ export class RunManager {
         'Exchange Art': 'AmK5g2XcyptVLCFESBCJqoSfwV3znGoVYQnqEnaAZKWn',
         Elixir: '2qGyiNeWyZxNdkvWHc2jT5qkCnYa1j1gDLSSUmyoWMh8',
         Hadeswap: 'hadeK9DLv9eA7ya5KCTqSvSvRZeJC3JgD5a9Y3CNbvu',
-        OpenSea: 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk'
+        OpenSea: 'hausS13jsjafwWwGqZTUQRmWyvyxn9EQpqMwV1PBBmk',
       },
     }
   }
 
-  /**
-   *
-   * @param {SolanaServiceHub} solanaServiceInstance
-   * @returns {Array<any>}
-   */
-  static async collectTransactions(solanaServiceInstance, dataObj) {
-    Logger.silly(
-      this.#currentServiceName,
-      '[READY]: Collectiong NFT sales transactions for collection',
-      dataObj.collectionAddress
-    )
+  static async isParsedTransactionNFTSale(
+    parsedTransaction,
+    dataObj,
+    solanaServiceInstance
+  ) {
+    let isNFTSale = false
 
-    let transactions = await solanaServiceInstance
-      .getTransactionService()
-      .getConfirmedSignaturesForAddress(dataObj.collectionAddress)
-
-    if (!transactions.length) {
-      Logger.warn(
-        this.#currentServiceName,
-        '[CONTINUE]: Fetching NFT sales transactions...'
-      )
-      await timer(dataObj.pollingInterval)
-      this.collectTransactions(solanaServiceInstance, dataObj)
+    let mintAddress = null
+    try {
+      mintAddress = parsedTransaction?.meta?.postTokenBalances[0]?.mint
+      if (mintAddress) {
+        const nft = await solanaServiceInstance
+          .getNFTService()
+          .getNFTDataByMintAddress(mintAddress)
+        isNFTSale =
+          nft.collection?.address.toBase58() == dataObj.collectionAddress
+      }
+    } catch (e) {
     }
 
-    Logger.silly(
-      this.#currentServiceName,
-      '[SUCCESS]: Fetching NFT sales transactions. Found:',
-      transactions.length
-    )
-
-    return transactions
-  }
-
-  static async checkIfTransactionIsNFTSale(
-    transaction,
-    solanaServiceInstance,
-    dataObj
-  ) {
-    const parsedTransaction = await solanaServiceInstance
-      .getTransactionService()
-      .getParsedTransactionBySignature(transaction.signature)
-
-    if (!parsedTransaction?.meta?.postTokenBalances[0]?.mint) {
-      return false
-    }
-
-    return parsedTransaction.meta.logMessages.find((program) => {
-      const marketplacePrograms = Object.values(dataObj.marketplacesAndPrograms)
-      return marketplacePrograms.find((marketplaceProgram) =>
-        program.includes(marketplaceProgram)
-      )
-    })
-  }
-
-  static async findNewTransactionsBasedOnInitialOnes(
-    initialTransactions,
-    solanaServiceInstance,
-    dataObj
-  ) {
-    let transactions = await this.collectTransactions(
-      solanaServiceInstance,
-      dataObj
-    )
-    let newTransactions = transactions.filter(
-      (transaction) =>
-        !initialTransactions.find(
-          (initialTransaction) =>
-            transaction.signature === initialTransaction.signature
-        )
-    )
-    Logger.info('[LENGTH]:', '', newTransactions.length)
-    return newTransactions
+    return isNFTSale
   }
 }

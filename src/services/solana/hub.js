@@ -6,6 +6,7 @@ import { Logger } from '../../tools/logger.js'
 import { SolanaValidatorService } from './validator.js'
 import { ErrorHelper } from '../../helpers/error.js'
 import { SolanaNFTService } from './nft.js'
+import { SolanaCandyMachineService } from './candy.js'
 
 export class SolanaServiceHub {
   #connection
@@ -13,6 +14,7 @@ export class SolanaServiceHub {
   #keyPairService
   #transactionService
   #nftService
+  #candyMachineService
   #network
   #currentServiceName = 'Solana Connection Service'
   constructor(network) {
@@ -28,7 +30,8 @@ export class SolanaServiceHub {
       `(${network}) wallet service`,
       `(${network}) keypair service`,
       `(${network}) transaction service`,
-      `(${network}) nft service`
+      `(${network}) nft service`,
+      `(${network}) candy machine service`,
     )
     this.#network = network
     this.#connection = new Connection(clusterApiUrl(this.#network))
@@ -42,6 +45,10 @@ export class SolanaServiceHub {
       this.#network
     )
     this.#nftService = new SolanaNFTService(this.#connection, this.#network)
+    this.#candyMachineService = new SolanaCandyMachineService(
+      this.#connection,
+      this.#network,
+    )
   }
 
   /**
@@ -74,5 +81,13 @@ export class SolanaServiceHub {
    */
   getNFTService() {
     return this.#nftService
+  }
+
+  /**
+   * @description Get Solana candy machine service object
+   * @returns {SolanaCandyMachineService}
+   */
+  getCandyMachineService() {
+    return this.#candyMachineService
   }
 }
