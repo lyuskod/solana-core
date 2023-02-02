@@ -49,6 +49,7 @@ async function runner() {
   )
   while (true) {
     try {
+      // Fetch new transactions
       let newTransactions = await solanaHub
         .getTransactionService()
         .getTransactionsGoingAfterTransaction(
@@ -56,32 +57,41 @@ async function runner() {
           theMostRecentTransactionSignature
         )
 
-      //1. Collect signatures
+      // If there are no new transactions. Just retry to fetch new ones after a while
+      if (!newTransactions.length) {
+        await timer(160)
+        continue
+      }
+
+      // Collect signatures of new transactions
       let signatures = newTransactions.map(
         (transaction) => transaction.signature
       )
       signatures = _.take(signatures, 99)
-      Logger.info('SIGNATURES COUNT', '', signatures.length)
 
-      //2. Get parsed transactions
+      // Initialize the the most recent transaction
+      theMostRecentTransactionSignature = signatures[0]
+
+      // Get parsed transactions
       let parsedTransactions = await con.getParsedTransactions(signatures, {
         maxSupportedTransactionVersion: 0,
       })
-      Logger.info('PARSED TRANSACTIONS COUNT', '', parsedTransactions.length)
-      let parsedTransactionsS = parsedTransactions.filter(
-        (parsedTransaction) =>
-          !parsedTransaction?.meta?.postTokenBalances[0]?.mint?.startsWith(
-            'So111111'
-          ) &&
-          parsedTransaction?.meta?.postTokenBalances[0]?.mint?.toString() &&
-          parsedTransaction?.transaction?.message?.accountKeys?.find((acc) =>
-            Object.values(dataObject.marketplacesAndPrograms).find(
-              (marketProgram) => acc.pubkey.toBase58() == marketProgram
-            )
-          )
-      )
+      // // Logger.info('PARSED TRANSACTIONS COUNT', '', parsedTransactions.length)
+      // let parsedTransactionsS = parsedTransactions.filter(
+      //   (parsedTransaction) =>
+      //     !parsedTransaction?.meta?.postTokenBalances[0]?.mint?.startsWith(
+      //       'So111111'
+      //     ) &&
+      //     parsedTransaction?.meta?.postTokenBalances[0]?.mint?.toString() &&
+      //     parsedTransaction?.transaction?.message?.accountKeys?.find((acc) =>
+      //       Object.values(dataObject.marketplacesAndPrograms).find(
+      //         (marketProgram) => acc.pubkey.toBase58() == marketProgram
+      //       )
+      //     )
+      // )
 
-      let parssss = parsedTransactionsS.filter((parsedTransaction) =>
+      //Parse transactions to filter only one that have spl token program (NFT Sale)
+      let parssss = parsedTransactions.filter((parsedTransaction) =>
         parsedTransaction?.meta?.innerInstructions?.find(
           (innerInstaction) =>
             !!innerInstaction?.instructions?.find(
@@ -92,17 +102,6 @@ async function runner() {
         )
       )
 
-      Logger.info(
-        'AFTER FILTERING PARSED TXS COUNT',
-        '',
-        parsedTransactionsS.length
-      )
-
-      //3. Filter only new transactions
-      if(!signatures.length){
-        continue
-      }
-      theMostRecentTransactionSignature = signatures[0]
       newTransactions = []
       for (let parsedTransaction of parssss) {
         let isNftSale = await RunManager.isParsedTransactionNFTSale(
@@ -113,21 +112,14 @@ async function runner() {
         if (isNftSale) {
           newTransactions.push(parsedTransaction)
         }
-        // await timer(200)
       }
 
-      Logger.info('NEW TRANSACTIONS COUNT', '', newTransactions.length)
-
       if (!newTransactions.length) {
-        Logger.info(
-          'Sales Bot',
-          'New transactions not found. Retrying fetch....'
-        )
         await timer(160)
         newTransactions = null
         signatures = null
         parsedTransactions = null
-        parsedTransactionsS = null
+        // parsedTransactionsS = null
         parssss = null
         newTransactions = null
         continue
@@ -136,17 +128,22 @@ async function runner() {
       Logger.info('Sales Bot', 'New transactions found', newTransactions.length)
       for (let index = newTransactions.length - 1; index >= 0; index--) {
         let parsedTransaction = newTransactions[index]
-        Logger.info(
-          'Sales Bot',
-          'Yes, transactions is NFT sale. Parsing NFT data ...',
-          parsedTransaction
-        )
         const NFTData = await Parser.parseParsedTransactionNFTData(
           parsedTransaction,
           dataObject.marketplacesAndPrograms,
           solanaHub
         )
         Logger.info('Sales Bot', 'Found Sold NFT', NFTData)
+        Logger.info('Sales Bot', 'Posting to discord')
+        await RunManager.postSaleToDiscord(
+          dataObject.discordUrl,
+          NFTData.item.name,
+          NFTData.transaction.price,
+          NFTData.transaction.date,
+          NFTData.transaction.id,
+          NFTData.item.image
+        )
+        Logger.info('Sales Bot', 'Posted to discord!')
         // await timer(200)
         continue
       }

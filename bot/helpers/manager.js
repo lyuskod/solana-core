@@ -3,6 +3,8 @@ import { Environment } from '../../src/tools/env.js'
 import { SolanaServiceHub } from '../../src/services/solana/hub.js'
 import _ from 'lodash'
 import { Connection } from '@solana/web3.js/lib/index.cjs.js'
+import axios from 'axios'
+import { AxiosServiceHub } from '../../src/services/axios/hub.js'
 
 export const timer = (ms) => new Promise((res) => setTimeout(res, ms))
 export class RunManager {
@@ -43,6 +45,10 @@ export class RunManager {
       pollingInterval: +Environment.getEnvValueByKey(
         'POLLING_INTERWALL_IN_MILLS'
       ),
+      updateAuthorityAddress: Environment.getEnvValueByKey(
+        'UPDATE_AUTHORITY_ADDRESS'
+      ),
+      discordUrl: Environment.getEnvValueByKey('DISCORD_URL'),
       marketplacesAndPrograms: {
         'Magic Eden v1': 'MEisE1HzehtrDpAAT8PnLHjpSSkRYakotTuJRPjTpo8',
         'Magic Eden v2': 'M2mx93ekt1fmXSVkTrUL9xVFHkmME8HTUi5Cyc5aF7K',
@@ -73,12 +79,70 @@ export class RunManager {
           .getNFTService()
           .getNFTDataByMintAddress(mintAddress)
         isNFTSale =
-          nft.collection?.address.toBase58() == dataObj.collectionAddress
+          nft.updateAuthorityAddress?.toBase58() ==
+          dataObj.updateAuthorityAddress
+        dataObj.collectionAddress
       }
-    } catch (e) {
-      console.log(e)
-    }
+    } catch (e) {}
 
     return isNFTSale
+  }
+
+  static async postSaleToDiscord(
+    discordUrl,
+    title,
+    price,
+    date,
+    signature,
+    imageURL
+  ) {
+    const embeds = [
+      {
+        title: `SALE`,
+        color: 5174599,
+        footer: {
+          text: 'Bot created by Dmitry Lyusko',
+        },
+        description: `${title}`,
+        fields: [
+          {
+            name: 'Price',
+            value: `${price} SOL`,
+            inline: true,
+          },
+          {
+            name: 'Date',
+            value: `${date}`,
+            inline: true,
+          },
+          {
+            name: 'Explorer',
+            value: `https://explorer.solana.com/tx/${signature}`,
+          },
+          {
+            name: 'Image',
+            value: imageURL.toString(),
+          },
+        ],
+      },
+    ]
+
+    // let embeds = [
+    //   {
+    //     title: 'Discord Webhook Example',
+    //     color: 5174599,
+    //     footer: {
+    //       text: `11`,
+    //     },
+    //     fields: [
+    //       {
+    //         name: 'Field Name',
+    //         value: 'Field Value',
+    //       },
+    //     ],
+    //   },
+    // ]
+
+    await AxiosServiceHub.sendPost(discordUrl, { embeds })
   }
 }

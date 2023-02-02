@@ -10,6 +10,9 @@ import {
 import fs from 'fs'
 import { RunManager } from './bot/helpers/manager.js'
 import { Logger } from './src/tools/logger.js'
+import axios from 'axios'
+import { Environment } from './src/tools/env.js'
+import { AxiosServiceHub } from './src/services/axios/hub.js'
 
 const f = async () => {
   RunManager.killProgramIfMainDataIsNotInitialized(
@@ -26,24 +29,57 @@ const f = async () => {
     '5o9U4acaMt63VLL88XZ8fvarf1ByfodzRKgUhbiAvWhF2sA5s9urpL2daX5q4DeQdtLySstVTP2nwpeyjJGE1QiP'
   const NFTSaleTXId =
     '3CrSxfpmTWY1kABgjVyZ1uSewFoPaWmFTY1VgnGepjU5sW7CeRKcrhiLJpwDEVhn2z8y4h57B8MKMuatDqyk2otf'
-  const transacts = []
+  const parsedTransactions = []
   const parsed = await hub
     .getTransactionService()
-    .getParsedTransactionBySignature(NFTSaleTXId)
+    .getParsedTransactionBySignature(
+      '4ahxWdgr3Pw2wBDxgta3rFCatzX1DQYj71PpmJa4eUoThDijF4dGWcZCw7dRenfS9cMmtaTD88AqrN1kSjpW3vcm'
+    )
   // console.log(parsed.meta.innerInstructions[2]?.instructions[2])
-  transacts.push(parsed)
-  const isFound = !!transacts.find(
+  parsedTransactions.push(parsed)
+  let parsedTransactionsS = parsedTransactions.filter(
     (parsedTransaction) =>
-      !!parsedTransaction?.meta?.innerInstructions?.find(
-        (innerInstaction) =>
-          !!innerInstaction?.instructions.find(
-            (instruction) =>
-              instruction?.parsed?.info?.mint &&
-              instruction?.program == 'spl-associated-token-account'
-          )
+      !parsedTransaction?.meta?.postTokenBalances[0]?.mint?.startsWith(
+        'So111111'
+      ) &&
+      parsedTransaction?.meta?.postTokenBalances[0]?.mint?.toString() &&
+      parsedTransaction?.transaction?.message?.accountKeys?.find((acc) =>
+        Object.values(dataObject.marketplacesAndPrograms).find(
+          (marketProgram) => acc.pubkey.toBase58() == marketProgram
+        )
       )
   )
-  console.log(isFound)
+
+  let parssss = parsedTransactionsS.filter((parsedTransaction) =>
+    parsedTransaction?.meta?.innerInstructions?.find(
+      (innerInstaction) =>
+        !!innerInstaction?.instructions?.find(
+          (instruction) =>
+            instruction?.parsed?.info?.mint &&
+            instruction?.program == 'spl-associated-token-account'
+        )
+    )
+  )
+  const isNFTSAle1 = await RunManager.isParsedTransactionNFTSale(
+    parssss[0],
+    dataObject,
+    solanaHub
+  )
+  // console.log(parssss[0])
+  console.log(isNFTSAle1)
+  console.log(
+    await solanaHub
+      .getNFTService()
+      .getNFTDataByMintAddress('73L6hQCyTaesCkcjTU9uvXyPtfkdbKz32H2CgXhjvhRs')
+  )
+
+  console.log(
+    await solanaHub
+      .getCandyMachineService()
+      .getCandyMachineCreatorAddressByCandyMachineId(
+        'CMZYPASGWeTz7RNGHaRJfCq2XQ5pYK6nDvVQxzkH51zb'
+      )
+  )
   // console.log(parsed.meta.innerInstructions[2]?.instructions[2]?.parsed?.info?.mint)
   // console.log(parsed.meta.innerInstructions[0]?.instructions?.parsed?.type == 'transfer')
   // console.log(parsed.meta.innerInstructions[1].instructions.type == 'createAccount')

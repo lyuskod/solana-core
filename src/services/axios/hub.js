@@ -48,6 +48,16 @@ export class AxiosServiceHub {
     return response
   }
 
+  static async sendPost(url, json) {
+    let config = {
+      method: 'POST',
+      url: url,
+      headers: { 'Content-Type': 'application/json' },
+      data: json,
+    }
+    return await axios(config)
+  }
+
   /**
    * @description - (Internal) Format params from object-like instance into String format (e.g. 'name=Tome&age=19')
    * @param {Object} - params Params in object-like instance (e.g. {name: 'Tom'})
