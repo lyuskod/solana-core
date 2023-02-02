@@ -11,12 +11,19 @@ import _ from 'lodash'
 
 dotenv.config()
 
+/**
+ * NOW works as listing (search for listings)
+ *
+ *
+ *
+ */
 async function runner() {
   RunManager.killProgramIfMainDataIsNotInitialized(
     'COLLECTION_ADDRESS',
     'POLLING_INTERWALL_IN_MILLS'
   )
   const dataObject = RunManager.getMainDataObject()
+  console.log(dataObject.collectionAddress)
   const solanaHub = new SolanaServiceHub('mainnet-beta')
   const con = new Connection(clusterApiUrl('mainnet-beta'))
 
@@ -65,13 +72,39 @@ async function runner() {
         (parsedTransaction) =>
           !parsedTransaction?.meta?.postTokenBalances[0]?.mint?.startsWith(
             'So111111'
-          ) && parsedTransaction?.meta?.postTokenBalances[0]?.mint?.toString()
+          ) &&
+          parsedTransaction?.meta?.postTokenBalances[0]?.mint?.toString() &&
+          parsedTransaction?.transaction?.message?.accountKeys?.find((acc) =>
+            Object.values(dataObject.marketplacesAndPrograms).find(
+              (marketProgram) => acc.pubkey.toBase58() == marketProgram
+            )
+          )
+      )
+
+      let parssss = parsedTransactionsS.filter((parsedTransaction) =>
+        parsedTransaction?.meta?.innerInstructions?.find(
+          (innerInstaction) =>
+            !!innerInstaction?.instructions?.find(
+              (instruction) =>
+                instruction?.parsed?.info?.mint &&
+                instruction?.program == 'spl-associated-token-account'
+            )
+        )
+      )
+
+      Logger.info(
+        'AFTER FILTERING PARSED TXS COUNT',
+        '',
+        parsedTransactionsS.length
       )
 
       //3. Filter only new transactions
+      if(!signatures.length){
+        continue
+      }
       theMostRecentTransactionSignature = signatures[0]
       newTransactions = []
-      for (let parsedTransaction of parsedTransactionsS) {
+      for (let parsedTransaction of parssss) {
         let isNftSale = await RunManager.isParsedTransactionNFTSale(
           parsedTransaction,
           dataObject,
@@ -80,7 +113,7 @@ async function runner() {
         if (isNftSale) {
           newTransactions.push(parsedTransaction)
         }
-        await timer(200)
+        // await timer(200)
       }
 
       Logger.info('NEW TRANSACTIONS COUNT', '', newTransactions.length)
@@ -91,6 +124,12 @@ async function runner() {
           'New transactions not found. Retrying fetch....'
         )
         await timer(160)
+        newTransactions = null
+        signatures = null
+        parsedTransactions = null
+        parsedTransactionsS = null
+        parssss = null
+        newTransactions = null
         continue
       }
 
@@ -112,7 +151,6 @@ async function runner() {
         continue
       }
     } catch (e) {
-      Logger.error('Sales Bot', 'An error is thrown', e.message)
       throw e
       continue
     }

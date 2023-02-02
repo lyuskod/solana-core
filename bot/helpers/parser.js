@@ -40,12 +40,12 @@ export class Parser {
       .getNFTDataByMintAddress(nftAddress)
     return {
       links: {
-        solanaFM: `https://solana.fm/tx/${parsedTransaction.signatures[0]}`,
-        solscan: `https://solscan.io/tx/${parsedTransaction.signatures[0]}`,
+        solanaFM: `https://solana.fm/tx/${parsedTransaction.transaction.signatures[0]}`,
+        solscan: `https://solscan.io/tx/${parsedTransaction.transaction.signatures[0]}`,
       },
       transaction: {
-        id: parsedTransaction.signatures[0],
-        date: new Date(transaction.blockTime * 1000).toLocaleString(),
+        id: parsedTransaction.transaction.signatures[0],
+        date: new Date(parsedTransaction.blockTime * 1000).toLocaleString(),
         price:
           Math.abs(
             parsedTransaction.meta.preBalances[0] -

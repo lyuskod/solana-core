@@ -92,4 +92,3 @@ Thumbs.db
 dev.env
 volumes/app/*
 volumes/db/*
-script.js

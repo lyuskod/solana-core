@@ -76,6 +76,7 @@ export class RunManager {
           nft.collection?.address.toBase58() == dataObj.collectionAddress
       }
     } catch (e) {
+      console.log(e)
     }
 
     return isNFTSale

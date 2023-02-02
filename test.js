@@ -22,14 +22,32 @@ const f = async () => {
 
   const hub = new SolanaServiceHub('mainnet-beta')
   const me = new MagicEdenServiceHub('https://api-mainnet.magiceden.dev/v2')
+  const notNFTSaleTxId =
+    '5o9U4acaMt63VLL88XZ8fvarf1ByfodzRKgUhbiAvWhF2sA5s9urpL2daX5q4DeQdtLySstVTP2nwpeyjJGE1QiP'
+  const NFTSaleTXId =
+    '3CrSxfpmTWY1kABgjVyZ1uSewFoPaWmFTY1VgnGepjU5sW7CeRKcrhiLJpwDEVhn2z8y4h57B8MKMuatDqyk2otf'
+  const transacts = []
   const parsed = await hub
     .getTransactionService()
-    .getParsedTransactionBySignature(
-      'X6CSvzQeQ78KnF4wtxo6SZywmXfMPiFPrJr1ft52Y6DQWcnGePCuohuzHhzb7HwxnHCF8UHiBjVW71sNk6mA5JW'
-    )
-  console.log(dataObject)
-  const s = await RunManager.isParsedTransactionNFTSale(parsed, dataObject, hub)
-    console.log(s)
+    .getParsedTransactionBySignature(NFTSaleTXId)
+  // console.log(parsed.meta.innerInstructions[2]?.instructions[2])
+  transacts.push(parsed)
+  const isFound = !!transacts.find(
+    (parsedTransaction) =>
+      !!parsedTransaction?.meta?.innerInstructions?.find(
+        (innerInstaction) =>
+          !!innerInstaction?.instructions.find(
+            (instruction) =>
+              instruction?.parsed?.info?.mint &&
+              instruction?.program == 'spl-associated-token-account'
+          )
+      )
+  )
+  console.log(isFound)
+  // console.log(parsed.meta.innerInstructions[2]?.instructions[2]?.parsed?.info?.mint)
+  // console.log(parsed.meta.innerInstructions[0]?.instructions?.parsed?.type == 'transfer')
+  // console.log(parsed.meta.innerInstructions[1].instructions.type == 'createAccount')
+  // console.log(parsed.meta.innerInstructions[2].instructions)
   // const s = await new Metaplex(new Connection(clusterApiUrl('mainnet-beta')))
   //   .nfts()
   //   .findByMint({
